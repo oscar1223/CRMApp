@@ -11,16 +11,6 @@
 		A1234567890123456789012C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789012D /* ContentView.swift */; };
 		A1234567890123456789012E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789012F /* Assets.xcassets */; };
 		A1234567890123456789013A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789013B /* Preview Assets.xcassets */; };
-		A1234567890123456789013C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789013D /* Models.swift */; };
-		A1234567890123456789013E /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789013F /* DataManager.swift */; };
-		A1234567890123456789014A /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789014B /* DashboardView.swift */; };
-		A1234567890123456789014C /* ClientsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789014D /* ClientsView.swift */; };
-		A1234567890123456789014E /* ClientDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789014F /* ClientDetailView.swift */; };
-		A1234567890123456789015A /* AddClientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789015B /* AddClientView.swift */; };
-		A1234567890123456789015C /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789015D /* TasksView.swift */; };
-		A1234567890123456789015E /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789015F /* AddTaskView.swift */; };
-		A1234567890123456789016A /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789016B /* ActivitiesView.swift */; };
-		A1234567890123456789016C /* AddActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789016D /* AddActivityView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,16 +18,6 @@
 		A1234567890123456789012D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A1234567890123456789012F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1234567890123456789013B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		A1234567890123456789013D /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
-		A1234567890123456789013F /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		A1234567890123456789014B /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
-		A1234567890123456789014D /* ClientsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsView.swift; sourceTree = "<group>"; };
-		A1234567890123456789014F /* ClientDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientDetailView.swift; sourceTree = "<group>"; };
-		A1234567890123456789015B /* AddClientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddClientView.swift; sourceTree = "<group>"; };
-		A1234567890123456789015D /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
-		A1234567890123456789015F /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
-		A1234567890123456789016B /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
-		A1234567890123456789016D /* AddActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddActivityView.swift; sourceTree = "<group>"; };
 		A1234567890123456789016E /* CRMApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CRMApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -57,16 +37,6 @@
 			children = (
 				A1234567890123456789012B /* CRMAppApp.swift */,
 				A1234567890123456789012D /* ContentView.swift */,
-				A1234567890123456789013D /* Models.swift */,
-				A1234567890123456789013F /* DataManager.swift */,
-				A1234567890123456789014B /* DashboardView.swift */,
-				A1234567890123456789014D /* ClientsView.swift */,
-				A1234567890123456789014F /* ClientDetailView.swift */,
-				A1234567890123456789015B /* AddClientView.swift */,
-				A1234567890123456789015D /* TasksView.swift */,
-				A1234567890123456789015F /* AddTaskView.swift */,
-				A1234567890123456789016B /* ActivitiesView.swift */,
-				A1234567890123456789016D /* AddActivityView.swift */,
 				A1234567890123456789012F /* Assets.xcassets */,
 				A1234567890123456789017B /* Preview Content */,
 			);
@@ -168,16 +138,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1234567890123456789012C /* ContentView.swift in Sources */,
-				A1234567890123456789013C /* Models.swift in Sources */,
-				A1234567890123456789013E /* DataManager.swift in Sources */,
-				A1234567890123456789014A /* DashboardView.swift in Sources */,
-				A1234567890123456789014C /* ClientsView.swift in Sources */,
-				A1234567890123456789014E /* ClientDetailView.swift in Sources */,
-				A1234567890123456789015A /* AddClientView.swift in Sources */,
-				A1234567890123456789015C /* TasksView.swift in Sources */,
-				A1234567890123456789015E /* AddTaskView.swift in Sources */,
-				A1234567890123456789016A /* ActivitiesView.swift in Sources */,
-				A1234567890123456789016C /* AddActivityView.swift in Sources */,
 				A1234567890123456789012A /* CRMAppApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
