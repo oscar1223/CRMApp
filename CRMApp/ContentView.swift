@@ -939,8 +939,74 @@ private struct BlackoutRange {
     }
 }
 
+// MARK: - Client Model
+private struct Client: Identifiable, Codable, Hashable {
+    let id: UUID
+    var name: String
+    var email: String
+    var phone: String
+    var notes: String
+    var createdAt: Date
+    
+    init(id: UUID = UUID(), name: String, email: String, phone: String, notes: String = "") {
+        self.id = id
+        self.name = name
+        self.email = email
+        self.phone = phone
+        self.notes = notes
+        self.createdAt = Date()
+    }
+}
+
+private final class ClientStore: ObservableObject {
+    @Published var clients: [Client] = []
+    private let key = "Clients.v1"
+    
+    init() {
+        loadClients()
+    }
+    
+    func save() {
+        if let data = try? JSONEncoder().encode(clients) {
+            UserDefaults.standard.set(data, forKey: key)
+        }
+    }
+    
+    private func loadClients() {
+        if let data = UserDefaults.standard.data(forKey: key),
+           let decoded = try? JSONDecoder().decode([Client].self, from: data) {
+            self.clients = decoded
+        } else {
+            // Add some sample clients
+            self.clients = [
+                Client(name: "María García", email: "maria@email.com", phone: "+34 600 123 456", notes: "Cliente frecuente, prefiere citas matutinas"),
+                Client(name: "Juan Pérez", email: "juan@email.com", phone: "+34 600 789 012", notes: "Primera consulta"),
+                Client(name: "Ana López", email: "ana@email.com", phone: "+34 600 345 678", notes: "Cliente VIP")
+            ]
+        }
+    }
+    
+    func addClient(_ client: Client) {
+        clients.append(client)
+        save()
+    }
+    
+    func updateClient(_ client: Client) {
+        if let index = clients.firstIndex(where: { $0.id == client.id }) {
+            clients[index] = client
+            save()
+        }
+    }
+    
+    func deleteClient(_ client: Client) {
+        clients.removeAll { $0.id == client.id }
+        save()
+    }
+}
+
 private struct BookingSettingsPage: View {
     @StateObject private var store = BookingStore()
+    @StateObject private var clientStore = ClientStore()
     @State private var newLinkTitle: String = ""
     @State private var newLinkURL: String = ""
     @State private var selectedBlackout: Date = Date()
@@ -950,6 +1016,12 @@ private struct BookingSettingsPage: View {
     @State private var editingLink: BookingLink?
     @State private var editLinkTitle: String = ""
     @State private var editLinkURL: String = ""
+    @State private var showingClientModal = false
+    @State private var editingClient: Client?
+    @State private var newClientName: String = ""
+    @State private var newClientEmail: String = ""
+    @State private var newClientPhone: String = ""
+    @State private var newClientNotes: String = ""
     
     var body: some View {
         Form {
@@ -1105,6 +1177,40 @@ private struct BookingSettingsPage: View {
                         set: { store.settings.reminders24h = $0; store.save() }
                     ))
                 }
+                
+                Section(header: Text("Clientes")) {
+                    // Add new client button
+                    Button("+ Añadir Cliente") {
+                        newClientName = ""
+                        newClientEmail = ""
+                        newClientPhone = ""
+                        newClientNotes = ""
+                        editingClient = nil
+                        showingClientModal = true
+                    }
+                    .foregroundColor(.accentColor)
+                    
+                    // Clients list
+                    if clientStore.clients.isEmpty {
+                        Text("No hay clientes registrados")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .italic()
+                    } else {
+                        ForEach(clientStore.clients) { client in
+                            ClientRow(client: client) {
+                                editingClient = client
+                                newClientName = client.name
+                                newClientEmail = client.email
+                                newClientPhone = client.phone
+                                newClientNotes = client.notes
+                                showingClientModal = true
+                            } onDelete: {
+                                clientStore.deleteClient(client)
+                            }
+                        }
+                    }
+                }
         }
         .sheet(isPresented: $showingEditModal) {
             EditBookingLinkModal(
@@ -1113,6 +1219,17 @@ private struct BookingSettingsPage: View {
                 url: $editLinkURL,
                 onSave: saveEditedLink,
                 onCancel: { showingEditModal = false }
+            )
+        }
+        .sheet(isPresented: $showingClientModal) {
+            ClientModal(
+                client: $editingClient,
+                name: $newClientName,
+                email: $newClientEmail,
+                phone: $newClientPhone,
+                notes: $newClientNotes,
+                onSave: saveClient,
+                onCancel: { showingClientModal = false }
             )
         }
     }
@@ -1279,6 +1396,30 @@ private struct BookingSettingsPage: View {
         store.save()
         showingEditModal = false
     }
+    
+    private func saveClient() {
+        if let client = editingClient {
+            // Update existing client
+            let updatedClient = Client(
+                id: client.id,
+                name: newClientName,
+                email: newClientEmail,
+                phone: newClientPhone,
+                notes: newClientNotes
+            )
+            clientStore.updateClient(updatedClient)
+        } else {
+            // Add new client
+            let newClient = Client(
+                name: newClientName,
+                email: newClientEmail,
+                phone: newClientPhone,
+                notes: newClientNotes
+            )
+            clientStore.addClient(newClient)
+        }
+        showingClientModal = false
+    }
 }
 
 // MARK: - Booking Link Components
@@ -1375,6 +1516,109 @@ private struct EditBookingLinkModal: View {
                         onSave()
                     }
                     .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty || url.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Client Components
+private struct ClientRow: View {
+    let client: Client
+    let onEdit: () -> Void
+    let onDelete: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // Client avatar
+            Circle()
+                .fill(Color.accentColor.opacity(0.1))
+                .frame(width: 40, height: 40)
+                .overlay(
+                    Text(String(client.name.prefix(1)).uppercased())
+                        .font(.headline)
+                        .foregroundColor(.accentColor)
+                )
+            
+            // Client info
+            VStack(alignment: .leading, spacing: 2) {
+                Text(client.name)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                
+                Text(client.email)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                if !client.phone.isEmpty {
+                    Text(client.phone)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            // Action buttons
+            HStack(spacing: 8) {
+                Button("Editar") {
+                    onEdit()
+                }
+                .font(.caption)
+                .foregroundColor(.accentColor)
+                
+                Button("Eliminar") {
+                    onDelete()
+                }
+                .font(.caption)
+                .foregroundColor(.red)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+private struct ClientModal: View {
+    @Binding var client: Client?
+    @Binding var name: String
+    @Binding var email: String
+    @Binding var phone: String
+    @Binding var notes: String
+    let onSave: () -> Void
+    let onCancel: () -> Void
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Información del Cliente")) {
+                    TextField("Nombre completo", text: $name)
+                    TextField("Email", text: $email)
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                    TextField("Teléfono", text: $phone)
+                        .keyboardType(.phonePad)
+                }
+                
+                Section(header: Text("Notas")) {
+                    TextField("Notas adicionales...", text: $notes, axis: .vertical)
+                        .lineLimit(3...6)
+                }
+            }
+            .navigationTitle(client == nil ? "Nuevo Cliente" : "Editar Cliente")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancelar") {
+                        onCancel()
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Guardar") {
+                        onSave()
+                    }
+                    .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty || email.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
         }
