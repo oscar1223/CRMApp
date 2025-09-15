@@ -21,13 +21,21 @@ extension Color {
     static let textTertiary = Color(red: 0.64, green: 0.64, blue: 0.68) // #A3A3AD
     static let textInverse = Color.white
     
-    // Calendar Specific Colors
+    // Calendar Specific Colors - Enhanced for better contrast
     static let calendarToday = Color(red: 0.36, green: 0.32, blue: 0.98) // #5B51FA
     static let calendarSelected = Color(red: 0.36, green: 0.32, blue: 0.98) // #5B51FA
-    static let calendarEventOrange = Color(red: 1.0, green: 0.67, blue: 0.36) // #FFAB5C
-    static let calendarEventBlue = Color(red: 0.36, green: 0.78, blue: 1.0) // #5CC8FF
-    static let calendarEventPurple = Color(red: 0.67, green: 0.36, blue: 1.0) // #AB5CFF
-    static let calendarEventGreen = Color(red: 0.36, green: 0.9, blue: 0.67) // #5CE6AB
+    
+    // Enhanced Event Colors with better contrast and vibrancy
+    static let calendarEventOrange = Color(red: 1.0, green: 0.55, blue: 0.2) // #FF8C33 (More vibrant)
+    static let calendarEventBlue = Color(red: 0.2, green: 0.7, blue: 1.0) // #33B3FF (More vibrant)
+    static let calendarEventPurple = Color(red: 0.7, green: 0.2, blue: 1.0) // #B333FF (More vibrant)
+    static let calendarEventGreen = Color(red: 0.2, green: 0.8, blue: 0.4) // #33CC66 (More vibrant)
+    
+    // Additional vibrant event colors
+    static let calendarEventRed = Color(red: 1.0, green: 0.3, blue: 0.3) // #FF4D4D
+    static let calendarEventTeal = Color(red: 0.2, green: 0.8, blue: 0.8) // #33CCCC
+    static let calendarEventPink = Color(red: 1.0, green: 0.4, blue: 0.8) // #FF66CC
+    static let calendarEventYellow = Color(red: 1.0, green: 0.8, blue: 0.2) // #FFCC33
     
     // Status Colors
     static let successGreen = Color(red: 0.13, green: 0.7, blue: 0.4) // #22B366
@@ -40,79 +48,104 @@ extension Color {
     static let borderLight = Color(red: 0.96, green: 0.96, blue: 0.97) // #F4F4F6
 }
 
+// MARK: - Responsive Helper Functions
+private func isIPad() -> Bool {
+    UIDevice.current.userInterfaceIdiom == .pad
+}
+
+private func screenWidth() -> CGFloat {
+    UIScreen.main.bounds.width
+}
+
+private func responsiveScaleFactor() -> CGFloat {
+    if isIPad() {
+        return 1.4
+    } else if screenWidth() > 414 {
+        return 1.1
+    } else {
+        return 1.0
+    }
+}
+
 // MARK: - Modern Style Modifiers
 extension View {
-    // Modern Button Styles
+    // Responsive Modern Button Styles
     func modernButton(style: ModernButtonStyle = .primary) -> some View {
-        self
-            .font(.system(size: 15, weight: .medium))
+        let scaleFactor = responsiveScaleFactor()
+        return self
+            .font(.system(size: 15 * scaleFactor, weight: .medium))
             .foregroundColor(style.textColor)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 20 * scaleFactor)
+            .padding(.vertical, 12 * scaleFactor)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 12 * scaleFactor)
                     .fill(style.backgroundColor)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: 12 * scaleFactor)
                             .stroke(style.borderColor, lineWidth: style.borderWidth)
                     )
             )
-            .shadow(color: style.shadowColor, radius: style.shadowRadius, x: 0, y: style.shadowY)
+            .shadow(color: style.shadowColor, radius: style.shadowRadius * scaleFactor, x: 0, y: style.shadowY * scaleFactor)
     }
     
-    // Modern Card Style
+    // Responsive Modern Card Style
     func modernCard(isDark: Bool = false) -> some View {
-        self
-            .padding(20)
+        let scaleFactor = responsiveScaleFactor()
+        return self
+            .padding(20 * scaleFactor)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: 16 * scaleFactor)
                     .fill(isDark ? Color.backgroundDarkCard : Color.backgroundCard)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: 16 * scaleFactor)
                             .stroke(Color.borderSecondary, lineWidth: 0.5)
                     )
             )
-            .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 2)
+            .shadow(color: Color.black.opacity(0.06), radius: 12 * scaleFactor, x: 0, y: 4 * scaleFactor)
     }
     
-    // Modern Calendar Card Style
+    // Responsive Modern Calendar Card Style
     func modernCalendarCard(isDark: Bool = false) -> some View {
-        self
-            .padding(16)
+        let scaleFactor = responsiveScaleFactor()
+        return self
+            .padding(16 * scaleFactor)
             .background(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 20 * scaleFactor)
                     .fill(isDark ? Color.backgroundDark : Color.backgroundCard)
+                    .shadow(color: Color.black.opacity(0.08), radius: 16 * scaleFactor, x: 0, y: 6 * scaleFactor)
             )
-            .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 4)
     }
     
     // Modern Input Style
     func modernInput() -> some View {
-        self
-            .font(.system(size: 15))
+        let scaleFactor = responsiveScaleFactor()
+        return self
+            .font(.system(size: 15 * scaleFactor))
             .foregroundColor(.textPrimary)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 16 * scaleFactor)
+            .padding(.vertical, 12 * scaleFactor)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 12 * scaleFactor)
                     .fill(Color.backgroundTertiary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: 12 * scaleFactor)
                             .stroke(Color.borderPrimary, lineWidth: 1)
                     )
             )
     }
     
-    // Modern Typography
+    // Responsive Modern Typography
     func modernText(size: ModernTextSize = .body, color: Color = .textPrimary, weight: Font.Weight? = nil) -> some View {
-        self
-            .font(.system(size: size.size, weight: weight ?? size.weight, design: .rounded))
+        let scaleFactor = responsiveScaleFactor()
+        return self
+            .font(.system(size: size.size * scaleFactor, weight: weight ?? size.weight, design: .rounded))
             .foregroundColor(color)
     }
     
-    // Modern Spacing
+    // Responsive Modern Spacing
     func modernPadding(_ edges: Edge.Set = .all, _ length: ModernSpacing = .medium) -> some View {
-        self.padding(edges, length.value)
+        let scaleFactor = responsiveScaleFactor()
+        return self.padding(edges, length.value * scaleFactor)
     }
 }
 
@@ -231,4 +264,3 @@ enum ModernSpacing {
         }
     }
 }
-

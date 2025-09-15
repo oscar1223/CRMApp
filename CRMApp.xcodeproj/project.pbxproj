@@ -11,6 +11,15 @@
 		A1234567890123456789012C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789012D /* ContentView.swift */; };
 		A1234567890123456789012E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789012F /* Assets.xcassets */; };
 		A1234567890123456789013A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789013B /* Preview Assets.xcassets */; };
+		F06A8ECC2E78BAB600A8DBFC /* NotionDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */; };
+		F06A8ECF2E78BAB600A8DBFC /* MonthGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EC42E78BAB600A8DBFC /* MonthGrid.swift */; };
+		F06A8ED02E78BAB600A8DBFC /* EventsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EC32E78BAB600A8DBFC /* EventsList.swift */; };
+		F06A8ED52E78BAB600A8DBFC /* WeekStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EC52E78BAB600A8DBFC /* WeekStrip.swift */; };
+		F06A8EE02E78BAD000A8DBFC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F06A8EDE2E78BAD000A8DBFC /* Preview Assets.xcassets */; };
+		F06A8EE12E78BAD000A8DBFC /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE22E78BAD000A8DBFC /* Event.swift */; };
+		F06A8EE32E78BAD000A8DBFC /* CalendarMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE42E78BAD000A8DBFC /* CalendarMainView.swift */; };
+		F06A8EE52E78BAD000A8DBFC /* ComingSoonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */; };
+		F06A8EE72E78BAD000A8DBFC /* ModernTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +28,15 @@
 		A1234567890123456789012F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1234567890123456789013B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A1234567890123456789016E /* CRMApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CRMApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotionDesignSystem.swift; sourceTree = "<group>"; };
+		F06A8EC32E78BAB600A8DBFC /* EventsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsList.swift; sourceTree = "<group>"; };
+		F06A8EC42E78BAB600A8DBFC /* MonthGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthGrid.swift; sourceTree = "<group>"; };
+		F06A8EC52E78BAB600A8DBFC /* WeekStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekStrip.swift; sourceTree = "<group>"; };
+		F06A8EDE2E78BAD000A8DBFC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		F06A8EE22E78BAD000A8DBFC /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		F06A8EE42E78BAD000A8DBFC /* CalendarMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarMainView.swift; sourceTree = "<group>"; };
+		F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComingSoonView.swift; sourceTree = "<group>"; };
+		F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTabBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +53,10 @@
 		A1234567890123456789017A /* CRMApp */ = {
 			isa = PBXGroup;
 			children = (
+				F06A8EB42E78BAB600A8DBFC /* Components */,
+				F06A8EB92E78BAB600A8DBFC /* Models */,
+				F06A8ECB2E78BAB600A8DBFC /* Views */,
+				F06A8EDF2E78BAD000A8DBFC /* Preview Content */,
 				A1234567890123456789012B /* CRMAppApp.swift */,
 				A1234567890123456789012D /* ContentView.swift */,
 				A1234567890123456789012F /* Assets.xcassets */,
@@ -65,6 +87,51 @@
 				A1234567890123456789017A /* CRMApp */,
 				A1234567890123456789017C /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		F06A8EB42E78BAB600A8DBFC /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */,
+				F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		F06A8EB92E78BAB600A8DBFC /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F06A8EE22E78BAD000A8DBFC /* Event.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		F06A8EC62E78BAB600A8DBFC /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				F06A8EC32E78BAB600A8DBFC /* EventsList.swift */,
+				F06A8EC42E78BAB600A8DBFC /* MonthGrid.swift */,
+				F06A8EC52E78BAB600A8DBFC /* WeekStrip.swift */,
+				F06A8EE42E78BAD000A8DBFC /* CalendarMainView.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		F06A8ECB2E78BAB600A8DBFC /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F06A8EC62E78BAB600A8DBFC /* Calendar */,
+				F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F06A8EDF2E78BAD000A8DBFC /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				F06A8EDE2E78BAD000A8DBFC /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -126,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1234567890123456789013A /* Preview Assets.xcassets in Resources */,
+				F06A8EE02E78BAD000A8DBFC /* Preview Assets.xcassets in Resources */,
 				A1234567890123456789012E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,8 +205,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F06A8ECC2E78BAB600A8DBFC /* NotionDesignSystem.swift in Sources */,
+				F06A8ECF2E78BAB600A8DBFC /* MonthGrid.swift in Sources */,
+				F06A8ED02E78BAB600A8DBFC /* EventsList.swift in Sources */,
+				F06A8ED52E78BAB600A8DBFC /* WeekStrip.swift in Sources */,
 				A1234567890123456789012C /* ContentView.swift in Sources */,
 				A1234567890123456789012A /* CRMAppApp.swift in Sources */,
+				F06A8EE12E78BAD000A8DBFC /* Event.swift in Sources */,
+				F06A8EE32E78BAD000A8DBFC /* CalendarMainView.swift in Sources */,
+				F06A8EE52E78BAD000A8DBFC /* ComingSoonView.swift in Sources */,
+				F06A8EE72E78BAD000A8DBFC /* ModernTabBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +350,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"CRMApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -302,6 +379,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"CRMApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
