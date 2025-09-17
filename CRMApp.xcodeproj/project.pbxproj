@@ -20,6 +20,10 @@
 		F06A8EE32E78BAD000A8DBFC /* CalendarMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE42E78BAD000A8DBFC /* CalendarMainView.swift */; };
 		F06A8EE52E78BAD000A8DBFC /* ComingSoonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */; };
 		F06A8EE72E78BAD000A8DBFC /* ModernTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */; };
+		F0FFCABF2E7AC4FB00FB9D61 /* SettingsMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFCABD2E7AC4FB00FB9D61 /* SettingsMainView.swift */; };
+		F0FFCAC12E7AC52C00FB9D61 /* AppTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFCAC02E7AC52C00FB9D61 /* AppTabBar.swift */; };
+		F0FFCAC42E7ACC2F00FB9D61 /* ChatMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFCAC22E7ACC2F00FB9D61 /* ChatMainView.swift */; };
+		F0FFCAC62E7ACC4300FB9D61 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFCAC52E7ACC4300FB9D61 /* ChatMessage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +41,10 @@
 		F06A8EE42E78BAD000A8DBFC /* CalendarMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarMainView.swift; sourceTree = "<group>"; };
 		F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComingSoonView.swift; sourceTree = "<group>"; };
 		F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTabBar.swift; sourceTree = "<group>"; };
+		F0FFCABD2E7AC4FB00FB9D61 /* SettingsMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMainView.swift; sourceTree = "<group>"; };
+		F0FFCAC02E7AC52C00FB9D61 /* AppTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabBar.swift; sourceTree = "<group>"; };
+		F0FFCAC22E7ACC2F00FB9D61 /* ChatMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMainView.swift; sourceTree = "<group>"; };
+		F0FFCAC52E7ACC4300FB9D61 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +100,7 @@
 		F06A8EB42E78BAB600A8DBFC /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				F0FFCAC02E7AC52C00FB9D61 /* AppTabBar.swift */,
 				F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */,
 				F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */,
 			);
@@ -101,6 +110,7 @@
 		F06A8EB92E78BAB600A8DBFC /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F0FFCAC52E7ACC4300FB9D61 /* ChatMessage.swift */,
 				F06A8EE22E78BAD000A8DBFC /* Event.swift */,
 			);
 			path = Models;
@@ -120,6 +130,8 @@
 		F06A8ECB2E78BAB600A8DBFC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F0FFCAC32E7ACC2F00FB9D61 /* Chat */,
+				F0FFCABE2E7AC4FB00FB9D61 /* Settings */,
 				F06A8EC62E78BAB600A8DBFC /* Calendar */,
 				F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */,
 			);
@@ -132,6 +144,22 @@
 				F06A8EDE2E78BAD000A8DBFC /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F0FFCABE2E7AC4FB00FB9D61 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F0FFCABD2E7AC4FB00FB9D61 /* SettingsMainView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		F0FFCAC32E7ACC2F00FB9D61 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				F0FFCAC22E7ACC2F00FB9D61 /* ChatMainView.swift */,
+			);
+			path = Chat;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -210,9 +238,13 @@
 				F06A8ED02E78BAB600A8DBFC /* EventsList.swift in Sources */,
 				F06A8ED52E78BAB600A8DBFC /* WeekStrip.swift in Sources */,
 				A1234567890123456789012C /* ContentView.swift in Sources */,
+				F0FFCABF2E7AC4FB00FB9D61 /* SettingsMainView.swift in Sources */,
 				A1234567890123456789012A /* CRMAppApp.swift in Sources */,
+				F0FFCAC62E7ACC4300FB9D61 /* ChatMessage.swift in Sources */,
+				F0FFCAC12E7AC52C00FB9D61 /* AppTabBar.swift in Sources */,
 				F06A8EE12E78BAD000A8DBFC /* Event.swift in Sources */,
 				F06A8EE32E78BAD000A8DBFC /* CalendarMainView.swift in Sources */,
+				F0FFCAC42E7ACC2F00FB9D61 /* ChatMainView.swift in Sources */,
 				F06A8EE52E78BAD000A8DBFC /* ComingSoonView.swift in Sources */,
 				F06A8EE72E78BAD000A8DBFC /* ModernTabBar.swift in Sources */,
 			);

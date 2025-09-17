@@ -24,6 +24,16 @@ enum AppTab: Int, CaseIterable {
         case .settings: return "⚙️"
         }
     }
+
+    // SF Symbols to support the new AppTabBar
+    var systemIconName: String {
+        switch self {
+        case .calendar: return "calendar"
+        case .booking: return "person.2"
+        case .chat: return "list.bullet.rectangle"
+        case .settings: return "person.crop.square"
+        }
+    }
 }
 
 // MARK: - Main Content View
@@ -111,22 +121,14 @@ struct ContentView: View {
                         ))
                         
                     case .chat:
-                        ComingSoonView(
-                            title: "Asistente IA",
-                            subtitle: "Tu asistente personal inteligente para gestionar tu CRM",
-                            emoji: "🤖"
-                        )
+                        ChatMainView()
                         .transition(.asymmetric(
                             insertion: .move(edge: .trailing).combined(with: .opacity),
                             removal: .move(edge: .leading).combined(with: .opacity)
                         ))
                         
                     case .settings:
-                        ComingSoonView(
-                            title: "Configuración",
-                            subtitle: "Personaliza tu experiencia y ajusta las preferencias",
-                            emoji: "⚙️"
-                        )
+                        SettingsMainView()
                         .transition(.asymmetric(
                             insertion: .move(edge: .trailing).combined(with: .opacity),
                             removal: .move(edge: .leading).combined(with: .opacity)
@@ -138,13 +140,12 @@ struct ContentView: View {
                 .animation(.spring(response: 0.5, dampingFraction: 0.8), value: selectedTab)
             }
             
-            // Compact floating tab bar
+            // Compact floating tab bar (new style)
             VStack {
                 Spacer()
                 
-                ModernTabBar(selectedTab: $selectedTab)
+                AppTabBar(selectedTab: $selectedTab)
                     .frame(maxWidth: tabBarMaxWidth)
-                    .modernPadding(.horizontal, .medium)
                     .modernPadding(.bottom, .small)
                     .padding(.bottom, responsiveSafeBottomPadding)
             }
