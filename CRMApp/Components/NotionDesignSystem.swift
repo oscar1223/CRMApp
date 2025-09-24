@@ -59,9 +59,9 @@ private func screenWidth() -> CGFloat {
 
 private func responsiveScaleFactor() -> CGFloat {
     if isIPad() {
-        return 1.4
+        return 1.1      // Reduced from 1.4
     } else if screenWidth() > 414 {
-        return 1.1
+        return 1.0      // Reduced from 1.1
     } else {
         return 1.0
     }
@@ -73,15 +73,15 @@ extension View {
     func modernButton(style: ModernButtonStyle = .primary) -> some View {
         let scaleFactor = responsiveScaleFactor()
         return self
-            .font(.system(size: 15 * scaleFactor, weight: .medium))
+            .font(.system(size: 13 * scaleFactor, weight: .medium))  // Reduced from 15
             .foregroundColor(style.textColor)
-            .padding(.horizontal, 20 * scaleFactor)
-            .padding(.vertical, 12 * scaleFactor)
+            .padding(.horizontal, 16 * scaleFactor)  // Reduced from 20
+            .padding(.vertical, 10 * scaleFactor)   // Reduced from 12
             .background(
-                RoundedRectangle(cornerRadius: 12 * scaleFactor)
+                RoundedRectangle(cornerRadius: 10 * scaleFactor)  // Reduced from 12
                     .fill(style.backgroundColor)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12 * scaleFactor)
+                        RoundedRectangle(cornerRadius: 10 * scaleFactor)  // Reduced from 12
                             .stroke(style.borderColor, lineWidth: style.borderWidth)
                     )
             )
@@ -120,15 +120,15 @@ extension View {
     func modernInput() -> some View {
         let scaleFactor = responsiveScaleFactor()
         return self
-            .font(.system(size: 15 * scaleFactor))
+            .font(.system(size: 13 * scaleFactor))  // Reduced from 15
             .foregroundColor(.textPrimary)
-            .padding(.horizontal, 16 * scaleFactor)
-            .padding(.vertical, 12 * scaleFactor)
+            .padding(.horizontal, 14 * scaleFactor)  // Reduced from 16
+            .padding(.vertical, 10 * scaleFactor)   // Reduced from 12
             .background(
-                RoundedRectangle(cornerRadius: 12 * scaleFactor)
+                RoundedRectangle(cornerRadius: 10 * scaleFactor)  // Reduced from 12
                     .fill(Color.backgroundTertiary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12 * scaleFactor)
+                        RoundedRectangle(cornerRadius: 10 * scaleFactor)  // Reduced from 12
                             .stroke(Color.borderPrimary, lineWidth: 1)
                     )
             )
@@ -229,12 +229,12 @@ enum ModernTextSize {
     
     var size: CGFloat {
         switch self {
-        case .title: return 28
-        case .headline: return 20
-        case .body: return 16
-        case .subhead: return 14
-        case .caption: return 12
-        case .small: return 10
+        case .title: return 22      // Reduced from 28
+        case .headline: return 16   // Reduced from 20
+        case .body: return 14        // Reduced from 16
+        case .subhead: return 12     // Reduced from 14
+        case .caption: return 10     // Reduced from 12
+        case .small: return 8        // Reduced from 10
         }
     }
     

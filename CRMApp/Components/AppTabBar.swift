@@ -9,13 +9,54 @@ struct AppTabBar: View {
         UIDevice.current.userInterfaceIdiom == .pad
     }
     
-    private var barCornerRadius: CGFloat { isIPad ? 28 : 22 }
-    private var barVerticalPadding: CGFloat { isIPad ? 18 : 14 }
-    private var iconSize: CGFloat { isIPad ? 22 : 18 }
-    private var avatarSize: CGFloat { isIPad ? 32 : 28 }
+    @State private var orientation: UIDeviceOrientation = .portrait
+    
+    private var isLandscape: Bool {
+        orientation == .landscapeLeft || orientation == .landscapeRight
+    }
+    
+    private var barCornerRadius: CGFloat { 
+        if isIPad && isLandscape {
+            return 24  // Smaller radius in landscape
+        } else if isIPad {
+            return 28
+        } else {
+            return 22
+        }
+    }
+    
+    private var barVerticalPadding: CGFloat { 
+        if isIPad && isLandscape {
+            return 10  // Less padding in landscape
+        } else if isIPad {
+            return 12
+        } else {
+            return 14
+        }
+    }
+    
+    private var iconSize: CGFloat { 
+        if isIPad && isLandscape {
+            return 20  // Smaller icons in landscape
+        } else if isIPad {
+            return 22
+        } else {
+            return 18
+        }
+    }
+    
+    private var avatarSize: CGFloat { 
+        if isIPad && isLandscape {
+            return 28  // Smaller avatar in landscape
+        } else if isIPad {
+            return 32
+        } else {
+            return 28
+        }
+    }
     
     var body: some View {
-        HStack(spacing: isIPad ? 28 : 22) {
+        HStack(spacing: responsiveTabSpacing) {
             ForEach(AppTab.allCases, id: \.self) { tab in
                 TabItem(
                     tab: tab,
@@ -32,7 +73,7 @@ struct AppTabBar: View {
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.horizontal, isIPad ? 18 : 16)
+        .padding(.horizontal, responsiveHorizontalPadding)
         .padding(.vertical, barVerticalPadding)
         .background(
             RoundedRectangle(cornerRadius: barCornerRadius, style: .continuous)
@@ -43,7 +84,44 @@ struct AppTabBar: View {
                 )
                 .shadow(color: Color.black.opacity(0.25), radius: 18, x: 0, y: 8)
         )
-        .padding(.horizontal, isIPad ? 28 : 20)
+        .padding(.horizontal, responsiveOuterPadding)
+        .padding(.bottom, isIPad ? 0 : 8)  // No bottom padding for iPad
+        .onAppear {
+            orientation = UIDevice.current.orientation
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            orientation = UIDevice.current.orientation
+        }
+    }
+    
+    private var responsiveTabSpacing: CGFloat {
+        if isIPad && isLandscape {
+            return 32  // More spacing in landscape
+        } else if isIPad {
+            return 28
+        } else {
+            return 22
+        }
+    }
+    
+    private var responsiveHorizontalPadding: CGFloat {
+        if isIPad && isLandscape {
+            return 20  // More padding in landscape
+        } else if isIPad {
+            return 18
+        } else {
+            return 16
+        }
+    }
+    
+    private var responsiveOuterPadding: CGFloat {
+        if isIPad && isLandscape {
+            return 16  // More outer padding in landscape
+        } else if isIPad {
+            return 12
+        } else {
+            return 20
+        }
     }
 }
 
@@ -89,5 +167,3 @@ private struct TabItem: View {
         .accessibilityLabel(tab.title)
     }
 }
-
-

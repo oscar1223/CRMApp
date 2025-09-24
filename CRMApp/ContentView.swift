@@ -51,12 +51,31 @@ struct ContentView: View {
         UIDevice.current.userInterfaceIdiom == .pad
     }
     
-    private var tabBarMaxWidth: CGFloat {
-        isIPad ? 500 : 320
+    @State private var orientation: UIDeviceOrientation = .portrait
+    
+    private var isLandscape: Bool {
+        orientation == .landscapeLeft || orientation == .landscapeRight
     }
     
+    private var tabBarMaxWidth: CGFloat {
+        if isIPad && isLandscape {
+            return 600  // Wider for landscape iPad
+        } else if isIPad {
+            return 500
+        } else {
+            return 320
+        }
+    }
+    
+    // Responsive bottom padding based on orientation
     private var contentBottomPadding: CGFloat {
-        isIPad ? 100 : 80
+        if isIPad && isLandscape {
+            return 80  // Less padding in landscape
+        } else if isIPad {
+            return 120
+        } else {
+            return 80
+        }
     }
     
     var body: some View {
@@ -87,57 +106,55 @@ struct ContentView: View {
                 ) : AnyView(EmptyView())
             )
             
-            // Compact main content container
-            VStack(spacing: 0) {
-                // Reduced top spacing
-                Spacer()
-                    .frame(height: isIPad ? 16 : 12)
-                
-                // Tab content with compact design
-                Group {
-                    switch selectedTab {
-                    case .calendar:
-                        CalendarMainView(
-                            selectedDate: $selectedDate,
-                            currentMonthAnchor: $currentMonthAnchor,
-                            eventsCountByDay: $eventsCountByDay,
-                            eventsByDay: $eventsByDay
-                        )
-                        .modernPadding(.horizontal, isIPad ? .small : .xsmall)
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .trailing).combined(with: .opacity),
-                            removal: .move(edge: .leading).combined(with: .opacity)
-                        ))
-                        
-                    case .booking:
-                        ComingSoonView(
-                            title: "Reservas",
-                            subtitle: "Gestiona tus citas y reservas de manera eficiente",
-                            emoji: "📅"
-                        )
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .trailing).combined(with: .opacity),
-                            removal: .move(edge: .leading).combined(with: .opacity)
-                        ))
-                        
-                    case .chat:
-                        ChatMainView()
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .trailing).combined(with: .opacity),
-                            removal: .move(edge: .leading).combined(with: .opacity)
-                        ))
-                        
-                    case .settings:
-                        SettingsMainView()
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .trailing).combined(with: .opacity),
-                            removal: .move(edge: .leading).combined(with: .opacity)
-                        ))
+            // Responsive main content container
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    // Responsive top spacing
+                    Spacer()
+                        .frame(height: responsiveTopSpacing)
+                    
+                    // Tab content with responsive design
+                    Group {
+                        switch selectedTab {
+                        case .calendar:
+                            CalendarMainView(
+                                selectedDate: $selectedDate,
+                                currentMonthAnchor: $currentMonthAnchor,
+                                eventsCountByDay: $eventsCountByDay,
+                                eventsByDay: $eventsByDay
+                            )
+                            .modernPadding(.horizontal, responsiveHorizontalPadding)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .trailing).combined(with: .opacity),
+                                removal: .move(edge: .leading).combined(with: .opacity)
+                            ))
+                            
+                        case .booking:
+                            BookingMainView()
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .trailing).combined(with: .opacity),
+                                removal: .move(edge: .leading).combined(with: .opacity)
+                            ))
+                            
+                        case .chat:
+                            ChatMainView()
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .trailing).combined(with: .opacity),
+                                removal: .move(edge: .leading).combined(with: .opacity)
+                            ))
+                            
+                        case .settings:
+                            SettingsMainView()
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .trailing).combined(with: .opacity),
+                                removal: .move(edge: .leading).combined(with: .opacity)
+                            ))
+                        }
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.bottom, contentBottomPadding)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: selectedTab)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.bottom, contentBottomPadding)
-                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: selectedTab)
             }
             
             // Compact floating tab bar (new style)
@@ -147,23 +164,53 @@ struct ContentView: View {
                 AppTabBar(selectedTab: $selectedTab)
                     .frame(maxWidth: tabBarMaxWidth)
                     .modernPadding(.bottom, .small)
-                    .padding(.bottom, responsiveSafeBottomPadding)
+                    .padding(.bottom, isIPad ? 0 : responsiveSafeBottomPadding)  // No bottom padding for iPad
             }
         }
         .onAppear {
             loadMockEvents()
+            setupOrientationObserver()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            orientation = UIDevice.current.orientation
         }
         .preferredColorScheme(.light)
         .background(Color.backgroundPrimary)
     }
     
+    // Responsive spacing properties
+    private var responsiveTopSpacing: CGFloat {
+        if isIPad && isLandscape {
+            return 8  // Minimal top spacing in landscape
+        } else if isIPad {
+            return 16
+        } else {
+            return 12
+        }
+    }
+    
+    private var responsiveHorizontalPadding: ModernSpacing {
+        if isIPad && isLandscape {
+            return .medium  // More padding in landscape
+        } else if isIPad {
+            return .small
+        } else {
+            return .xsmall
+        }
+    }
+    
+    // Minimal safe area padding for iPad
     private var responsiveSafeBottomPadding: CGFloat {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let inset = scene.windows.first?.safeAreaInsets.bottom else { 
-            return isIPad ? 6.0 : 3.0 
+            return isIPad ? 0.0 : 3.0  // Minimal padding for iPad
         }
-        let basePadding: CGFloat = isIPad ? 6.0 : 3.0
-        return max(basePadding, inset + 2.0)
+        let basePadding: CGFloat = isIPad ? 0.0 : 3.0  // Minimal padding for iPad
+        return max(basePadding, inset)  // Only use safe area inset if needed
+    }
+    
+    private func setupOrientationObserver() {
+        orientation = UIDevice.current.orientation
     }
     
     private func loadMockEvents() {

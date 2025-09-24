@@ -20,6 +20,8 @@
 		F06A8EE32E78BAD000A8DBFC /* CalendarMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE42E78BAD000A8DBFC /* CalendarMainView.swift */; };
 		F06A8EE52E78BAD000A8DBFC /* ComingSoonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */; };
 		F06A8EE72E78BAD000A8DBFC /* ModernTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */; };
+		F0E5E59F2E8456B600B6289D /* BookingMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5E59D2E8456B600B6289D /* BookingMainView.swift */; };
+		F0E5E5A12E8456C800B6289D /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5E5A02E8456C800B6289D /* Client.swift */; };
 		F0FFCABF2E7AC4FB00FB9D61 /* SettingsMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFCABD2E7AC4FB00FB9D61 /* SettingsMainView.swift */; };
 		F0FFCAC12E7AC52C00FB9D61 /* AppTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFCAC02E7AC52C00FB9D61 /* AppTabBar.swift */; };
 		F0FFCAC42E7ACC2F00FB9D61 /* ChatMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFCAC22E7ACC2F00FB9D61 /* ChatMainView.swift */; };
@@ -41,6 +43,8 @@
 		F06A8EE42E78BAD000A8DBFC /* CalendarMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarMainView.swift; sourceTree = "<group>"; };
 		F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComingSoonView.swift; sourceTree = "<group>"; };
 		F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTabBar.swift; sourceTree = "<group>"; };
+		F0E5E59D2E8456B600B6289D /* BookingMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingMainView.swift; sourceTree = "<group>"; };
+		F0E5E5A02E8456C800B6289D /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		F0FFCABD2E7AC4FB00FB9D61 /* SettingsMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMainView.swift; sourceTree = "<group>"; };
 		F0FFCAC02E7AC52C00FB9D61 /* AppTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabBar.swift; sourceTree = "<group>"; };
 		F0FFCAC22E7ACC2F00FB9D61 /* ChatMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMainView.swift; sourceTree = "<group>"; };
@@ -110,6 +114,7 @@
 		F06A8EB92E78BAB600A8DBFC /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F0E5E5A02E8456C800B6289D /* Client.swift */,
 				F0FFCAC52E7ACC4300FB9D61 /* ChatMessage.swift */,
 				F06A8EE22E78BAD000A8DBFC /* Event.swift */,
 			);
@@ -130,6 +135,7 @@
 		F06A8ECB2E78BAB600A8DBFC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F0E5E59E2E8456B600B6289D /* Booking */,
 				F0FFCAC32E7ACC2F00FB9D61 /* Chat */,
 				F0FFCABE2E7AC4FB00FB9D61 /* Settings */,
 				F06A8EC62E78BAB600A8DBFC /* Calendar */,
@@ -144,6 +150,14 @@
 				F06A8EDE2E78BAD000A8DBFC /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F0E5E59E2E8456B600B6289D /* Booking */ = {
+			isa = PBXGroup;
+			children = (
+				F0E5E59D2E8456B600B6289D /* BookingMainView.swift */,
+			);
+			path = Booking;
 			sourceTree = "<group>";
 		};
 		F0FFCABE2E7AC4FB00FB9D61 /* Settings */ = {
@@ -239,6 +253,7 @@
 				F06A8ED52E78BAB600A8DBFC /* WeekStrip.swift in Sources */,
 				A1234567890123456789012C /* ContentView.swift in Sources */,
 				F0FFCABF2E7AC4FB00FB9D61 /* SettingsMainView.swift in Sources */,
+				F0E5E5A12E8456C800B6289D /* Client.swift in Sources */,
 				A1234567890123456789012A /* CRMAppApp.swift in Sources */,
 				F0FFCAC62E7ACC4300FB9D61 /* ChatMessage.swift in Sources */,
 				F0FFCAC12E7AC52C00FB9D61 /* AppTabBar.swift in Sources */,
@@ -246,6 +261,7 @@
 				F06A8EE32E78BAD000A8DBFC /* CalendarMainView.swift in Sources */,
 				F0FFCAC42E7ACC2F00FB9D61 /* ChatMainView.swift in Sources */,
 				F06A8EE52E78BAD000A8DBFC /* ComingSoonView.swift in Sources */,
+				F0E5E59F2E8456B600B6289D /* BookingMainView.swift in Sources */,
 				F06A8EE72E78BAD000A8DBFC /* ModernTabBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

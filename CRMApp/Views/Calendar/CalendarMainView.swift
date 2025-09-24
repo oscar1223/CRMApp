@@ -19,59 +19,32 @@ struct CalendarMainView: View {
         UIDevice.current.userInterfaceIdiom == .pad
     }
     
+    @State private var orientation: UIDeviceOrientation = .portrait
+    
+    private var isLandscape: Bool {
+        orientation == .landscapeLeft || orientation == .landscapeRight
+    }
+    
     var body: some View {
-        VStack(spacing: isIPad ? 16 : 12) {
-            // Compact header
-            calendarHeader
-            
-            // Calendar content with smoother transitions
+        GeometryReader { proxy in
+            let isHorizontal = isIPad && proxy.size.width > proxy.size.height
             Group {
-                switch viewMode {
-                case .month:
-                    MonthGrid(
-                        selectedDate: $selectedDate,
-                        monthAnchor: $currentMonthAnchor,
-                        eventsCountByDay: eventsCountByDay,
-                        eventsByDay: eventsByDay,
-                        onMonthChanged: { delta in
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                currentMonthAnchor = Calendar.current.date(byAdding: .month, value: delta, to: currentMonthAnchor) ?? currentMonthAnchor
-                            }
-                        },
-                        onSelectDate: { date in
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                selectedDate = date
-                            }
-                        }
-                    )
-                    .modernPadding(.horizontal, .small)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
-                
-                case .week:
-                    WeekStrip(selectedDate: $selectedDate)
-                        .modernPadding(.horizontal, .small)
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .trailing).combined(with: .opacity),
-                            removal: .move(edge: .leading).combined(with: .opacity)
-                        ))
+                if isHorizontal {
+                    // Horizontal layout for iPad landscape (Calendar left, Events right)
+                    horizontalLayout(width: proxy.size.width)
+                } else {
+                    // Vertical layout for portrait or iPhone
+                    verticalLayout
                 }
-            }
-            .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewMode)
-            
-            // Compact events section
-            if !getEventsForSelectedDate().isEmpty {
-                eventsSection
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .bottom).combined(with: .opacity),
-                        removal: .move(edge: .bottom).combined(with: .opacity)
-                    ))
-                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: getEventsForSelectedDate().count)
             }
         }
         .modernPadding(.bottom, .small)
+        .onAppear {
+            orientation = UIDevice.current.orientation
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            orientation = UIDevice.current.orientation
+        }
     }
     
     private var calendarHeader: some View {
@@ -202,9 +175,9 @@ struct CalendarMainView: View {
             .modernPadding(.horizontal, .medium)
             .modernPadding(.top, .small)
             
-            // Compact events list
+            // Responsive events list
             EventsList(events: getEventsForSelectedDate())
-                .frame(maxHeight: isIPad ? 200 : 150)
+                .frame(maxHeight: responsiveEventsMaxHeight)
                 .background(
                     RoundedRectangle(cornerRadius: isIPad ? 16 : 12)
                         .fill(Color.backgroundSecondary)
@@ -266,5 +239,203 @@ struct CalendarMainView: View {
     private func getEventsForSelectedDate() -> [MockEvent] {
         let dayStart = Calendar.current.startOfDay(for: selectedDate)
         return eventsByDay[dayStart] ?? []
+    }
+    
+    private var responsiveSpacing: CGFloat {
+        if isIPad && isLandscape {
+            return 12  // Less spacing in landscape
+        } else if isIPad {
+            return 16
+        } else {
+            return 12
+        }
+    }
+    
+    private var responsiveEventsMaxHeight: CGFloat {
+        if isIPad && isLandscape {
+            return 320  // Compact height for 4-5 events in landscape
+        } else if isIPad {
+            return 240  // Compact height for portrait
+        } else {
+            return 160  // Compact height for iPhone
+        }
+    }
+    
+    // MARK: - Layout Views
+    private var verticalLayout: some View {
+        VStack(spacing: responsiveSpacing) {
+            // Compact header
+            calendarHeader
+            
+            // Calendar content with smoother transitions
+            Group {
+                switch viewMode {
+                case .month:
+                    MonthGrid(
+                        selectedDate: $selectedDate,
+                        monthAnchor: $currentMonthAnchor,
+                        eventsCountByDay: eventsCountByDay,
+                        eventsByDay: eventsByDay,
+                        onMonthChanged: { delta in
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                currentMonthAnchor = Calendar.current.date(byAdding: .month, value: delta, to: currentMonthAnchor) ?? currentMonthAnchor
+                            }
+                        },
+                        onSelectDate: { date in
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                selectedDate = date
+                            }
+                        }
+                    )
+                    .modernPadding(.horizontal, .small)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .move(edge: .leading).combined(with: .opacity)
+                    ))
+                
+                case .week:
+                    WeekStrip(selectedDate: $selectedDate)
+                        .modernPadding(.horizontal, .small)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
+                }
+            }
+            .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewMode)
+            
+            // Compact events section
+            if !getEventsForSelectedDate().isEmpty {
+                eventsSection
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .bottom).combined(with: .opacity),
+                        removal: .move(edge: .bottom).combined(with: .opacity)
+                    ))
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: getEventsForSelectedDate().count)
+            }
+        }
+    }
+    
+    private func horizontalLayout(width: CGFloat) -> some View {
+        // 60/40 split between Calendar and Events
+        let leftWidth = width * 0.6
+        let rightWidth = width * 0.4
+        return HStack(spacing: 20) {
+            // Left side - Calendar
+            VStack(spacing: 12) {
+                // Compact header
+                calendarHeader
+                
+                // Calendar content
+                Group {
+                    switch viewMode {
+                    case .month:
+                        MonthGrid(
+                            selectedDate: $selectedDate,
+                            monthAnchor: $currentMonthAnchor,
+                            eventsCountByDay: eventsCountByDay,
+                            eventsByDay: eventsByDay,
+                            onMonthChanged: { delta in
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                    currentMonthAnchor = Calendar.current.date(byAdding: .month, value: delta, to: currentMonthAnchor) ?? currentMonthAnchor
+                                }
+                            },
+                            onSelectDate: { date in
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    selectedDate = date
+                                }
+                            }
+                        )
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
+                    
+                    case .week:
+                        WeekStrip(selectedDate: $selectedDate)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .trailing).combined(with: .opacity),
+                                removal: .move(edge: .leading).combined(with: .opacity)
+                            ))
+                    }
+                }
+                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewMode)
+            }
+            .frame(width: leftWidth)
+            
+            // Right side - Events
+            VStack(alignment: .leading, spacing: 12) {
+                // Events header
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Eventos")
+                            .modernText(size: .headline, color: .textPrimary)
+                            .fontWeight(.bold)
+                        
+                        Text(formattedSelectedDate)
+                            .modernText(size: .subhead, color: .textSecondary)
+                            .fontWeight(.medium)
+                    }
+                    Spacer()
+                    
+                    Button(action: {}) {
+                        HStack(spacing: 4) {
+                            Text("Ver todos")
+                                .modernText(size: .subhead, color: .brandPrimary)
+                                .fontWeight(.semibold)
+                            Image(systemName: "arrow.right")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(Color.brandPrimary)
+                        }
+                    }
+                    .modernButton(style: .ghost)
+                }
+                .modernPadding(.horizontal, .medium)
+                .modernPadding(.top, .small)
+                
+                // Events list
+                if !getEventsForSelectedDate().isEmpty {
+                    EventsList(events: getEventsForSelectedDate())
+                        .frame(maxHeight: responsiveEventsMaxHeight)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.backgroundSecondary)
+                                .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
+                        )
+                        .modernCard()
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .trailing).combined(with: .opacity)
+                        ))
+                        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: getEventsForSelectedDate().count)
+                } else {
+                    // Empty state
+                    VStack(spacing: 16) {
+                        Image(systemName: "calendar")
+                            .font(.system(size: 48, weight: .light))
+                            .foregroundColor(.textTertiary)
+                        
+                        Text("No hay eventos")
+                            .modernText(size: .body, color: .textSecondary)
+                            .fontWeight(.medium)
+                        
+                        Text("Selecciona una fecha para ver los eventos")
+                            .modernText(size: .subhead, color: .textTertiary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.backgroundTertiary)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.borderLight, lineWidth: 0.5)
+                            )
+                    )
+                    .modernCard()
+                }
+            }
+            .frame(width: rightWidth)
+            .modernPadding(.leading, .medium)
+        }
     }
 }

@@ -103,39 +103,27 @@ struct WeekStrip: View {
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ) :
-                                (isToday ? 
-                                    LinearGradient(
-                                        colors: [
-                                            Color.calendarToday.opacity(0.2),
-                                            Color.calendarToday.opacity(0.1)
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ) : 
-                                    LinearGradient(
-                                        colors: [Color.clear],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
+                                LinearGradient(
+                                    colors: [Color.clear],
+                                    startPoint: .top,
+                                    endPoint: .bottom
                                 )
                         )
                         .overlay(
                             Circle()
                                 .stroke(
-                                    isSelected ? Color.calendarSelected :
-                                    (isToday ? Color.calendarToday : Color.borderLight),
-                                    lineWidth: isSelected || isToday ? 2 : 0.5
+                                    isSelected ? Color.calendarSelected : Color.borderLight,
+                                    lineWidth: isSelected ? 2 : 0.5
                                 )
                         )
                 )
                 .shadow(
-                    color: isSelected ? Color.calendarSelected.opacity(0.3) : 
-                           (isToday ? Color.calendarToday.opacity(0.2) : Color.black.opacity(0.02)),
-                    radius: isSelected ? 8 : (isToday ? 6 : 2),
+                    color: isSelected ? Color.calendarSelected.opacity(0.3) : Color.black.opacity(0.02),
+                    radius: isSelected ? 8 : 2,
                     x: 0,
-                    y: isSelected ? 4 : (isToday ? 3 : 1)
+                    y: isSelected ? 4 : 1
                 )
-                .scaleEffect(isSelected ? 1.1 : (isToday ? 1.05 : 1.0))
+                .scaleEffect(isSelected ? 1.1 : 1.0)
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSelected)
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isToday)
         }
