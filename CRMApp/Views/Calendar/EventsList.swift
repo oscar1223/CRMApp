@@ -9,14 +9,41 @@ struct EventsList: View {
     }
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: isIPad ? 8 : 6) {  // Reduced spacing for more compact layout
-                ForEach(events, id: \.id) { event in
-                    compactEventCard(event)
+        GeometryReader { geo in
+            let width = geo.size.width
+            let height = geo.size.height
+            let isTight = height <= (isIPad ? 220 : 170)
+            let isMedium = !isTight && height <= (isIPad ? 280 : 220)
+            
+            let horizontalPadding: CGFloat = isTight ? (isIPad ? 12 : 8) : (isIPad ? 16 : 12)
+            let verticalPadding: CGFloat = isTight ? (isIPad ? 8 : 6) : (isIPad ? 12 : 10)
+            let spacing: CGFloat = isTight ? (isIPad ? 8 : 6) : (isMedium ? (isIPad ? 10 : 8) : (isIPad ? 12 : 10))
+            let minCardWidth: CGFloat = isTight ? (isIPad ? 140 : 110) : (isMedium ? (isIPad ? 160 : 130) : (isIPad ? 180 : 140))
+            let cardHeight: CGFloat = isTight ? (isIPad ? 68 : 56) : (isMedium ? (isIPad ? 80 : 68) : (isIPad ? 90 : 78))
+            let columnsCount = max(1, Int(floor((width - horizontalPadding * 2 + spacing) / (minCardWidth + spacing))))
+            let rowsCount = max(1, Int(floor((height - verticalPadding * 2 + spacing) / (cardHeight + spacing))))
+            let maxItems = max(0, columnsCount * rowsCount)
+            let displayed = Array(events.prefix(maxItems))
+            let columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: columnsCount)
+            
+            VStack(alignment: .leading, spacing: spacing) {
+                LazyVGrid(columns: columns, alignment: .leading, spacing: spacing) {
+                    ForEach(displayed, id: \.id) { event in
+                        Group {
+                            if isTight {
+                                tinyEventCard(event)
+                            } else if isMedium {
+                                compactEventCard(event)
+                            } else {
+                                modernEventCard(event)
+                            }
+                        }
+                        .frame(height: cardHeight)
+                    }
                 }
             }
-            .modernPadding(.horizontal, .small)
-            .modernPadding(.vertical, .small)
+            .modernPadding(.horizontal, isIPad ? .small : .xsmall)
+            .modernPadding(.vertical, isIPad ? .small : .xsmall)
         }
     }
     
@@ -87,6 +114,50 @@ struct EventsList: View {
         }
     }
     
+    private func tinyEventCard(_ event: MockEvent) -> some View {
+        HStack(spacing: isIPad ? 10 : 8) {
+            Circle()
+                .fill(eventColor(for: event))
+                .frame(width: isIPad ? 8 : 6, height: isIPad ? 8 : 6)
+                .shadow(color: eventColor(for: event).opacity(0.25), radius: 2, x: 0, y: 1)
+            
+            VStack(alignment: .leading, spacing: isIPad ? 3 : 2) {
+                Text(event.title)
+                    .modernText(size: .small, color: .textPrimary)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                
+                HStack(spacing: isIPad ? 4 : 3) {
+                    Image(systemName: "clock")
+                        .font(.system(size: isIPad ? 9 : 8, weight: .medium))
+                        .foregroundColor(Color.textSecondary)
+                    Text(dateRangeString(for: event))
+                        .modernText(size: .small, color: .textSecondary)
+                        .lineLimit(1)
+                }
+            }
+            Spacer()
+        }
+        .padding(.horizontal, isIPad ? 10 : 8)
+        .padding(.vertical, isIPad ? 8 : 6)
+        .background(
+            RoundedRectangle(cornerRadius: isIPad ? 10 : 8)
+                .fill(Color.backgroundCard)
+                .overlay(
+                    RoundedRectangle(cornerRadius: isIPad ? 10 : 8)
+                        .stroke(Color.borderSecondary, lineWidth: 0.5)
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: isIPad ? 10 : 8)
+                .fill(eventColor(for: event))
+                .frame(width: isIPad ? 3 : 2)
+                .offset(x: isIPad ? -8 : -6),
+            alignment: .leading
+        )
+    }
+
     private func modernEventCard(_ event: MockEvent) -> some View {
         HStack(spacing: isIPad ? 20 : 16) {  // Increased spacing for iPad
             // Modern time indicator with enhanced styling

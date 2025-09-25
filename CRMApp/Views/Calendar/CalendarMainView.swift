@@ -8,6 +8,7 @@ struct CalendarMainView: View {
     @Binding var eventsByDay: [Date: [MockEvent]]
     
     @State private var viewMode: ViewMode = .month
+    @State private var showingNewActions: Bool = false
     
     enum ViewMode: String, CaseIterable {
         case month = "Mes"
@@ -65,7 +66,7 @@ struct CalendarMainView: View {
                 
                 // Compact action buttons
                 HStack(spacing: isIPad ? 12 : 8) {
-                    Button(action: { addNewEvent() }) {
+                    Button(action: { showingNewActions = true }) {
                         HStack(spacing: isIPad ? 6 : 4) {
                             Image(systemName: "plus")
                                 .font(.system(size: isIPad ? 14 : 12, weight: .semibold))
@@ -92,6 +93,18 @@ struct CalendarMainView: View {
             
             // Compact selected date indicator
             selectedDateIndicator
+        }
+        .sheet(isPresented: $showingNewActions) {
+            NewBookingActionsSheet(
+                onCopyShortLink: { copyToPasteboard("https://ink.ly/racso") },
+                onCopyFullLink: { copyToPasteboard("https://ink.ly/racso?utm=app&src=calendar") },
+                onCreateNewLink: { /* navigate or placeholder */ },
+                onAddManual: {
+                    showingNewActions = false
+                    addNewEvent()
+                }
+            )
+            .presentationDetents([.medium, .large])
         }
     }
     
@@ -234,6 +247,10 @@ struct CalendarMainView: View {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             selectedDate = today
         }
+    }
+
+    private func copyToPasteboard(_ text: String) {
+        UIPasteboard.general.string = text
     }
     
     private func getEventsForSelectedDate() -> [MockEvent] {
