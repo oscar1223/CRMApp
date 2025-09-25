@@ -3,6 +3,7 @@ import SwiftUI
 // MARK: - Events List
 struct EventsList: View {
     let events: [MockEvent]
+    var onSelect: (MockEvent) -> Void = { _ in }
     
     private var isIPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
@@ -39,6 +40,8 @@ struct EventsList: View {
                             }
                         }
                         .frame(height: cardHeight)
+                        .contentShape(Rectangle())
+                        .onTapGesture { onSelect(event) }
                     }
                 }
             }
@@ -109,9 +112,7 @@ struct EventsList: View {
             alignment: .leading
         )
         .contentShape(Rectangle())
-        .onTapGesture {
-            // Handle event tap
-        }
+        .onTapGesture { onSelect(event) }
     }
     
     private func tinyEventCard(_ event: MockEvent) -> some View {
@@ -156,6 +157,8 @@ struct EventsList: View {
                 .offset(x: isIPad ? -8 : -6),
             alignment: .leading
         )
+        .contentShape(Rectangle())
+        .onTapGesture { onSelect(event) }
     }
 
     private func modernEventCard(_ event: MockEvent) -> some View {
@@ -238,9 +241,7 @@ struct EventsList: View {
             alignment: .leading
         )
         .contentShape(Rectangle())
-        .onTapGesture {
-            // Handle event tap
-        }
+        .onTapGesture { onSelect(event) }
         .scaleEffect(1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: false)
     }

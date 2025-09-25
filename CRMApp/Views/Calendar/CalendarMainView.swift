@@ -9,6 +9,7 @@ struct CalendarMainView: View {
     
     @State private var viewMode: ViewMode = .month
     @State private var showingNewActions: Bool = false
+    @State private var editingEvent: MockEvent? = nil
     
     enum ViewMode: String, CaseIterable {
         case month = "Mes"
@@ -45,6 +46,18 @@ struct CalendarMainView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientation = UIDevice.current.orientation
+        }
+        .sheet(item: $editingEvent, onDismiss: {}) { event in
+            EditEventSheet(
+                title: event.title,
+                startDate: event.startDate,
+                endDate: event.endDate,
+                isAllDay: event.isAllDay,
+                onSave: { title, start, end, isAllDay in
+                    update(event: event, title: title, start: start, end: end, isAllDay: isAllDay)
+                },
+                onDelete: { delete(event: event) }
+            )
         }
     }
     
@@ -189,7 +202,9 @@ struct CalendarMainView: View {
             .modernPadding(.top, .small)
             
             // Responsive events list
-            EventsList(events: getEventsForSelectedDate())
+            EventsList(events: getEventsForSelectedDate(), onSelect: { event in
+                editingEvent = event
+            })
                 .frame(maxHeight: responsiveEventsMaxHeight)
                 .background(
                     RoundedRectangle(cornerRadius: isIPad ? 16 : 12)
@@ -256,6 +271,34 @@ struct CalendarMainView: View {
     private func getEventsForSelectedDate() -> [MockEvent] {
         let dayStart = Calendar.current.startOfDay(for: selectedDate)
         return eventsByDay[dayStart] ?? []
+    }
+
+    private func update(event: MockEvent, title: String, start: Date, end: Date, isAllDay: Bool) {
+        let cal = Calendar.current
+        let oldDay = cal.startOfDay(for: event.startDate)
+        if var arr = eventsByDay[oldDay] {
+            arr.removeAll { $0.id == event.id }
+            eventsByDay[oldDay] = arr
+            eventsCountByDay[oldDay] = arr.count
+        }
+        var newEvent = MockEvent(title: title, startDate: start, endDate: end, isAllDay: isAllDay)
+        newEvent.id = event.id
+        let newDay = cal.startOfDay(for: start)
+        eventsByDay[newDay, default: []].append(newEvent)
+        eventsCountByDay[newDay] = eventsByDay[newDay]?.count ?? 0
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            selectedDate = start
+        }
+    }
+
+    private func delete(event: MockEvent) {
+        let cal = Calendar.current
+        let day = cal.startOfDay(for: event.startDate)
+        if var arr = eventsByDay[day] {
+            arr.removeAll { $0.id == event.id }
+            eventsByDay[day] = arr
+            eventsCountByDay[day] = arr.count
+        }
     }
     
     private var responsiveSpacing: CGFloat {
@@ -412,7 +455,9 @@ struct CalendarMainView: View {
                 
                 // Events list
                 if !getEventsForSelectedDate().isEmpty {
-                    EventsList(events: getEventsForSelectedDate())
+                    EventsList(events: getEventsForSelectedDate(), onSelect: { event in
+                        editingEvent = event
+                    })
                         .frame(maxHeight: responsiveEventsMaxHeight)
                         .background(
                             RoundedRectangle(cornerRadius: 16)
