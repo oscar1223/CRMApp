@@ -20,6 +20,12 @@
 		F06A8EE32E78BAD000A8DBFC /* CalendarMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE42E78BAD000A8DBFC /* CalendarMainView.swift */; };
 		F06A8EE52E78BAD000A8DBFC /* ComingSoonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */; };
 		F06A8EE72E78BAD000A8DBFC /* ModernTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */; };
+		F0ABB1422E901E6300BC8069 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ABB1412E901E6300BC8069 /* UserProfile.swift */; };
+		F0ABB1502E901F9A00BC8069 /* ArtistsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ABB14D2E901F9A00BC8069 /* ArtistsManagementView.swift */; };
+		F0ABB1512E901F9A00BC8069 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ABB14B2E901F9A00BC8069 /* OnboardingView.swift */; };
+		F0ABB1522E901F9A00BC8069 /* StudioDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ABB14E2E901F9A00BC8069 /* StudioDashboardView.swift */; };
+		F0ABB1542E901FA900BC8069 /* Artist.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ABB1532E901FA900BC8069 /* Artist.swift */; };
+		F0ABB1562E901FB300BC8069 /* StudioTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ABB1552E901FB300BC8069 /* StudioTabBar.swift */; };
 		F0E5E59F2E8456B600B6289D /* BookingMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5E59D2E8456B600B6289D /* BookingMainView.swift */; };
 		F0E5E5A12E8456C800B6289D /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5E5A02E8456C800B6289D /* Client.swift */; };
 		F0E5E5A32E85B59200B6289D /* NewBookingActionsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5E5A22E85B59200B6289D /* NewBookingActionsSheet.swift */; };
@@ -45,6 +51,12 @@
 		F06A8EE42E78BAD000A8DBFC /* CalendarMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarMainView.swift; sourceTree = "<group>"; };
 		F06A8EE62E78BAD000A8DBFC /* ComingSoonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComingSoonView.swift; sourceTree = "<group>"; };
 		F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTabBar.swift; sourceTree = "<group>"; };
+		F0ABB1412E901E6300BC8069 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		F0ABB14B2E901F9A00BC8069 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		F0ABB14D2E901F9A00BC8069 /* ArtistsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistsManagementView.swift; sourceTree = "<group>"; };
+		F0ABB14E2E901F9A00BC8069 /* StudioDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioDashboardView.swift; sourceTree = "<group>"; };
+		F0ABB1532E901FA900BC8069 /* Artist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artist.swift; sourceTree = "<group>"; };
+		F0ABB1552E901FB300BC8069 /* StudioTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTabBar.swift; sourceTree = "<group>"; };
 		F0E5E59D2E8456B600B6289D /* BookingMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingMainView.swift; sourceTree = "<group>"; };
 		F0E5E5A02E8456C800B6289D /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		F0E5E5A22E85B59200B6289D /* NewBookingActionsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewBookingActionsSheet.swift; sourceTree = "<group>"; };
@@ -108,6 +120,7 @@
 		F06A8EB42E78BAB600A8DBFC /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				F0ABB1552E901FB300BC8069 /* StudioTabBar.swift */,
 				F0FFCAC02E7AC52C00FB9D61 /* AppTabBar.swift */,
 				F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */,
 				F06A8EE82E78BAD000A8DBFC /* ModernTabBar.swift */,
@@ -118,6 +131,8 @@
 		F06A8EB92E78BAB600A8DBFC /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F0ABB1532E901FA900BC8069 /* Artist.swift */,
+				F0ABB1412E901E6300BC8069 /* UserProfile.swift */,
 				F0E5E5A02E8456C800B6289D /* Client.swift */,
 				F0FFCAC52E7ACC4300FB9D61 /* ChatMessage.swift */,
 				F06A8EE22E78BAD000A8DBFC /* Event.swift */,
@@ -141,6 +156,8 @@
 		F06A8ECB2E78BAB600A8DBFC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F0ABB14C2E901F9A00BC8069 /* Onboarding */,
+				F0ABB14F2E901F9A00BC8069 /* Studio */,
 				F0E5E59E2E8456B600B6289D /* Booking */,
 				F0FFCAC32E7ACC2F00FB9D61 /* Chat */,
 				F0FFCABE2E7AC4FB00FB9D61 /* Settings */,
@@ -156,6 +173,23 @@
 				F06A8EDE2E78BAD000A8DBFC /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F0ABB14C2E901F9A00BC8069 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				F0ABB14B2E901F9A00BC8069 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		F0ABB14F2E901F9A00BC8069 /* Studio */ = {
+			isa = PBXGroup;
+			children = (
+				F0ABB14D2E901F9A00BC8069 /* ArtistsManagementView.swift */,
+				F0ABB14E2E901F9A00BC8069 /* StudioDashboardView.swift */,
+			);
+			path = Studio;
 			sourceTree = "<group>";
 		};
 		F0E5E59E2E8456B600B6289D /* Booking */ = {
@@ -257,9 +291,13 @@
 				F06A8ECF2E78BAB600A8DBFC /* MonthGrid.swift in Sources */,
 				F06A8ED02E78BAB600A8DBFC /* EventsList.swift in Sources */,
 				F06A8ED52E78BAB600A8DBFC /* WeekStrip.swift in Sources */,
+				F0ABB1502E901F9A00BC8069 /* ArtistsManagementView.swift in Sources */,
+				F0ABB1512E901F9A00BC8069 /* OnboardingView.swift in Sources */,
+				F0ABB1522E901F9A00BC8069 /* StudioDashboardView.swift in Sources */,
 				A1234567890123456789012C /* ContentView.swift in Sources */,
 				F0FFCABF2E7AC4FB00FB9D61 /* SettingsMainView.swift in Sources */,
 				F0E5E5A12E8456C800B6289D /* Client.swift in Sources */,
+				F0ABB1562E901FB300BC8069 /* StudioTabBar.swift in Sources */,
 				A1234567890123456789012A /* CRMAppApp.swift in Sources */,
 				F0FFCAC62E7ACC4300FB9D61 /* ChatMessage.swift in Sources */,
 				F0FFCAC12E7AC52C00FB9D61 /* AppTabBar.swift in Sources */,
@@ -267,7 +305,9 @@
 				F06A8EE12E78BAD000A8DBFC /* Event.swift in Sources */,
 				F06A8EE32E78BAD000A8DBFC /* CalendarMainView.swift in Sources */,
 				F0FFCAC42E7ACC2F00FB9D61 /* ChatMainView.swift in Sources */,
+				F0ABB1422E901E6300BC8069 /* UserProfile.swift in Sources */,
 				F06A8EE52E78BAD000A8DBFC /* ComingSoonView.swift in Sources */,
+				F0ABB1542E901FA900BC8069 /* Artist.swift in Sources */,
 				F0E5E5A32E85B59200B6289D /* NewBookingActionsSheet.swift in Sources */,
 				F0E5E59F2E8456B600B6289D /* BookingMainView.swift in Sources */,
 				F06A8EE72E78BAD000A8DBFC /* ModernTabBar.swift in Sources */,

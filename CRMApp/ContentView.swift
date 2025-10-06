@@ -1,12 +1,13 @@
 import SwiftUI
+import SwiftData
 
-// MARK: - App Tab Enum
+// MARK: - App Tab Enum (Individual Mode)
 enum AppTab: Int, CaseIterable {
     case calendar = 1
     case booking = 2
     case chat = 3
     case settings = 4
-    
+
     var title: String {
         switch self {
         case .calendar: return "Calendario"
@@ -15,7 +16,7 @@ enum AppTab: Int, CaseIterable {
         case .settings: return "Ajustes"
         }
     }
-    
+
     var emoji: String {
         switch self {
         case .calendar: return "📆"
@@ -36,9 +37,42 @@ enum AppTab: Int, CaseIterable {
     }
 }
 
+// MARK: - Studio Tab Enum (Studio Mode)
+enum StudioTab: Int, CaseIterable {
+    case dashboard = 1
+    case artists = 2
+    case chat = 3
+    case settings = 4
+
+    var title: String {
+        switch self {
+        case .dashboard: return "Dashboard"
+        case .artists: return "Artistas"
+        case .chat: return "Chat"
+        case .settings: return "Ajustes"
+        }
+    }
+
+    var systemIconName: String {
+        switch self {
+        case .dashboard: return "chart.bar.fill"
+        case .artists: return "person.3.fill"
+        case .chat: return "list.bullet.rectangle"
+        case .settings: return "person.crop.square"
+        }
+    }
+}
+
 // MARK: - Main Content View
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \UserProfile.updatedAt, order: .reverse) private var profiles: [UserProfile]
+
     @State private var selectedTab: AppTab = .calendar
+    @State private var selectedStudioTab: StudioTab = .dashboard
+    @State private var isStudioMode: Bool = false // For hybrid mode toggle
+    @State private var forceRefresh: Bool = false // Force UI refresh
+    @State private var currentAccountType: AccountType = .individual
     
     // Calendar state
     @State private var selectedDate: Date = Date()
@@ -78,104 +112,341 @@ struct ContentView: View {
         }
     }
     
+    private var currentProfile: UserProfile? {
+        profiles.first
+    }
+
+    private var accountType: AccountType {
+        currentProfile?.accountType ?? .individual
+    }
+
     var body: some View {
-        ZStack {
-            // Compact gradient background
-            LinearGradient(
-                colors: [
-                    Color.backgroundPrimary,
-                    Color.backgroundTertiary,
-                    Color.backgroundSecondary.opacity(0.8)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            .overlay(
-                // Subtle background pattern for larger screens
-                isIPad ? AnyView(
-                    GeometryReader { geometry in
-                        ZStack {
-                            Circle()
-                                .fill(Color.brandPrimary.opacity(0.02))
-                                .frame(width: 200, height: 200)
-                                .offset(x: geometry.size.width * 0.8, y: -geometry.size.height * 0.2)
-                                .blur(radius: 40)
-                        }
-                    }
-                ) : AnyView(EmptyView())
-            )
-            
-            // Responsive main content container
-            GeometryReader { geometry in
-                VStack(spacing: 0) {
-                    // Responsive top spacing
-                    Spacer()
-                        .frame(height: responsiveTopSpacing)
-                    
-                    // Tab content with responsive design
-                    Group {
-                        switch selectedTab {
-                        case .calendar:
-                            CalendarMainView(
-                                selectedDate: $selectedDate,
-                                currentMonthAnchor: $currentMonthAnchor,
-                                eventsCountByDay: $eventsCountByDay,
-                                eventsByDay: $eventsByDay
-                            )
-                            .modernPadding(.horizontal, responsiveHorizontalPadding)
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .leading).combined(with: .opacity)
-                            ))
-                            
-                        case .booking:
-                            BookingMainView()
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .leading).combined(with: .opacity)
-                            ))
-                            
-                        case .chat:
-                            ChatMainView()
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .leading).combined(with: .opacity)
-                            ))
-                            
-                        case .settings:
-                            SettingsMainView()
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .leading).combined(with: .opacity)
-                            ))
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.bottom, contentBottomPadding)
-                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: selectedTab)
-                }
+        Group {
+            // Hybrid mode: show toggle and render based on isStudioMode
+            if currentAccountType == .hybrid {
+                hybridModeView
             }
-            
-            // Compact floating tab bar (new style)
-            VStack {
-                Spacer()
-                
-                AppTabBar(selectedTab: $selectedTab)
-                    .frame(maxWidth: tabBarMaxWidth)
-                    .modernPadding(.bottom, .small)
-                    .padding(.bottom, isIPad ? 0 : responsiveSafeBottomPadding)  // No bottom padding for iPad
+            // Studio mode: show studio interface
+            else if currentAccountType == .studio {
+                studioModeView
+            }
+            // Individual mode: show original interface
+            else {
+                individualModeView
             }
         }
+        .id(currentAccountType.rawValue + (forceRefresh ? "refresh" : "")) // Force view refresh when account type changes
         .onAppear {
             loadMockEvents()
             setupOrientationObserver()
+            updateCurrentAccountType()
+            print("📱 ContentView appeared - Account Type: \(currentAccountType.displayName)")
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("AccountTypeChanged"))) { _ in
+            print("🔔 AccountTypeChanged notification received")
+            updateCurrentAccountType()
+            forceRefresh.toggle()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientation = UIDevice.current.orientation
         }
+        .onChange(of: profiles.first?.accountType) { newValue in
+            if let newType = newValue {
+                print("🔄 Profile changed detected in @Query: \(newType.displayName)")
+                currentAccountType = newType
+            }
+        }
+        .onChange(of: profiles.count) { _ in
+            print("👥 Profiles count changed: \(profiles.count)")
+            updateCurrentAccountType()
+        }
         .preferredColorScheme(.light)
         .background(Color.backgroundPrimary)
+    }
+
+    private func updateCurrentAccountType() {
+        if let type = profiles.first?.accountType {
+            currentAccountType = type
+            print("🔄 Updated currentAccountType to: \(type.displayName)")
+        }
+    }
+
+    // MARK: - Individual Mode View
+    private var individualModeView: some View {
+        ZStack {
+            backgroundGradient
+
+            // Responsive main content container
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    Spacer()
+                        .frame(height: responsiveTopSpacing)
+
+                    // Tab content
+                    individualTabContent
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.bottom, contentBottomPadding)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: selectedTab)
+                }
+            }
+
+            // Floating tab bar
+            VStack {
+                Spacer()
+                AppTabBar(selectedTab: $selectedTab)
+                    .frame(maxWidth: tabBarMaxWidth)
+                    .modernPadding(.bottom, .small)
+                    .padding(.bottom, isIPad ? 0 : responsiveSafeBottomPadding)
+            }
+        }
+    }
+
+    // MARK: - Studio Mode View
+    private var studioModeView: some View {
+        ZStack {
+            backgroundGradient
+
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    Spacer()
+                        .frame(height: responsiveTopSpacing)
+
+                    // Studio tab content
+                    studioTabContent
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.bottom, contentBottomPadding)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: selectedStudioTab)
+                }
+            }
+
+            // Floating studio tab bar
+            VStack {
+                Spacer()
+                StudioTabBar(selectedTab: $selectedStudioTab)
+                    .frame(maxWidth: tabBarMaxWidth)
+                    .modernPadding(.bottom, .small)
+                    .padding(.bottom, isIPad ? 0 : responsiveSafeBottomPadding)
+            }
+        }
+    }
+
+    // MARK: - Hybrid Mode View
+    private var hybridModeView: some View {
+        ZStack {
+            backgroundGradient
+
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    // Mode toggle at top
+                    modeToggle
+                        .modernPadding(.top, .small)
+                        .modernPadding(.horizontal, .medium)
+
+                    Spacer()
+                        .frame(height: responsiveTopSpacing)
+
+                    // Content based on mode
+                    Group {
+                        if isStudioMode {
+                            studioTabContent
+                                .transition(.asymmetric(
+                                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                                    removal: .move(edge: .leading).combined(with: .opacity)
+                                ))
+                        } else {
+                            individualTabContent
+                                .transition(.asymmetric(
+                                    insertion: .move(edge: .leading).combined(with: .opacity),
+                                    removal: .move(edge: .trailing).combined(with: .opacity)
+                                ))
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.bottom, contentBottomPadding)
+                }
+            }
+
+            // Floating tab bar (switches based on mode)
+            VStack {
+                Spacer()
+                if isStudioMode {
+                    StudioTabBar(selectedTab: $selectedStudioTab)
+                        .frame(maxWidth: tabBarMaxWidth)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                } else {
+                    AppTabBar(selectedTab: $selectedTab)
+                        .frame(maxWidth: tabBarMaxWidth)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+                EmptyView()
+                    .modernPadding(.bottom, .small)
+                    .padding(.bottom, isIPad ? 0 : responsiveSafeBottomPadding)
+            }
+            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isStudioMode)
+        }
+    }
+
+    // MARK: - Mode Toggle (for hybrid)
+    private var modeToggle: some View {
+        HStack(spacing: 0) {
+            // Individual button
+            Button(action: {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    isStudioMode = false
+                }
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: "person.fill")
+                        .font(.system(size: isIPad ? 14 : 12, weight: .semibold))
+                    Text("Personal")
+                        .font(.system(size: isIPad ? 14 : 12, weight: .semibold))
+                }
+                .foregroundColor(isStudioMode ? .textSecondary : .white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, isIPad ? 10 : 8)
+                .background(
+                    RoundedRectangle(cornerRadius: isIPad ? 10 : 8)
+                        .fill(isStudioMode ? Color.clear : Color.brandPrimary)
+                )
+            }
+
+            // Studio button
+            Button(action: {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    isStudioMode = true
+                }
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: "building.2.fill")
+                        .font(.system(size: isIPad ? 14 : 12, weight: .semibold))
+                    Text("Estudio")
+                        .font(.system(size: isIPad ? 14 : 12, weight: .semibold))
+                }
+                .foregroundColor(isStudioMode ? .white : .textSecondary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, isIPad ? 10 : 8)
+                .background(
+                    RoundedRectangle(cornerRadius: isIPad ? 10 : 8)
+                        .fill(isStudioMode ? Color.brandPrimary : Color.clear)
+                )
+            }
+        }
+        .padding(4)
+        .background(
+            RoundedRectangle(cornerRadius: isIPad ? 12 : 10)
+                .fill(Color.backgroundCard)
+                .overlay(
+                    RoundedRectangle(cornerRadius: isIPad ? 12 : 10)
+                        .stroke(Color.borderSecondary, lineWidth: 0.5)
+                )
+        )
+        .shadow(color: Color.black.opacity(0.06), radius: 12, x: 0, y: 4)
+        .frame(maxWidth: isIPad ? 300 : 240)
+    }
+
+    // MARK: - Background Gradient
+    private var backgroundGradient: some View {
+        LinearGradient(
+            colors: [
+                Color.backgroundPrimary,
+                Color.backgroundTertiary,
+                Color.backgroundSecondary.opacity(0.8)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+        .overlay(
+            isIPad ? AnyView(
+                GeometryReader { geometry in
+                    ZStack {
+                        Circle()
+                            .fill(Color.brandPrimary.opacity(0.02))
+                            .frame(width: 200, height: 200)
+                            .offset(x: geometry.size.width * 0.8, y: -geometry.size.height * 0.2)
+                            .blur(radius: 40)
+                    }
+                }
+            ) : AnyView(EmptyView())
+        )
+    }
+
+    // MARK: - Individual Tab Content
+    @ViewBuilder
+    private var individualTabContent: some View {
+        Group {
+            switch selectedTab {
+            case .calendar:
+                CalendarMainView(
+                    selectedDate: $selectedDate,
+                    currentMonthAnchor: $currentMonthAnchor,
+                    eventsCountByDay: $eventsCountByDay,
+                    eventsByDay: $eventsByDay
+                )
+                .modernPadding(.horizontal, responsiveHorizontalPadding)
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
+
+            case .booking:
+                BookingMainView()
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
+
+            case .chat:
+                ChatMainView()
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
+
+            case .settings:
+                SettingsMainView()
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
+            }
+        }
+    }
+
+    // MARK: - Studio Tab Content
+    @ViewBuilder
+    private var studioTabContent: some View {
+        Group {
+            switch selectedStudioTab {
+            case .dashboard:
+                StudioDashboardView()
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
+
+            case .artists:
+                ArtistsManagementView()
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
+
+            case .chat:
+                ChatMainView()
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
+
+            case .settings:
+                SettingsMainView()
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
+            }
+        }
     }
     
     // Responsive spacing properties
