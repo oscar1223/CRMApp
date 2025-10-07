@@ -69,7 +69,7 @@ struct ChatMainView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                     }
-                    .onChange(of: messages.count) { _ in
+                    .onChange(of: messages.count) { oldCount, newCount in
                         if let last = messages.last { proxy.scrollTo(last.id, anchor: .bottom) }
                     }
                 }

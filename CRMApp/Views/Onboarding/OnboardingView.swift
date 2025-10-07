@@ -4,10 +4,10 @@ import SwiftData
 // MARK: - Onboarding View
 struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
-    @Binding var isOnboardingComplete: Bool
 
     @State private var selectedType: AccountType?
     @State private var isAnimating = false
+    @State private var isSaving = false
 
     private var isIPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
@@ -179,11 +179,17 @@ struct OnboardingView: View {
             completeOnboarding()
         }) {
             HStack(spacing: isIPad ? 10 : 8) {
-                Text("Continuar")
-                    .font(.system(size: isIPad ? 18 : 16, weight: .semibold))
+                if isSaving {
+                    ProgressView()
+                        .tint(.white)
+                        .scaleEffect(0.8)
+                } else {
+                    Text("Continuar")
+                        .font(.system(size: isIPad ? 18 : 16, weight: .semibold))
 
-                Image(systemName: "arrow.right")
-                    .font(.system(size: isIPad ? 16 : 14, weight: .semibold))
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: isIPad ? 16 : 14, weight: .semibold))
+                }
             }
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
@@ -199,7 +205,9 @@ struct OnboardingView: View {
                     )
             )
             .shadow(color: Color.brandPrimary.opacity(0.4), radius: 20, x: 0, y: 10)
+            .opacity(isSaving ? 0.7 : 1.0)
         }
+        .disabled(isSaving)
         .buttonStyle(PlainButtonStyle())
         .modernPadding(.horizontal, .medium)
         .modernPadding(.top, .small)
@@ -207,31 +215,50 @@ struct OnboardingView: View {
 
     // MARK: - Actions
     private func completeOnboarding() {
-        guard let type = selectedType else { return }
+        guard let type = selectedType, !isSaving else {
+            print("⚠️ No type selected or already saving")
+            return
+        }
 
-        print("🎉 Onboarding completed - Selected: \(type.displayName)")
+        isSaving = true
+        print("🎉 Onboarding started - Selected: \(type.displayName)")
 
         // Create user profile
         let profile = UserProfile(accountType: type)
+        print("👤 Created profile: \(profile.accountType.displayName)")
+
         modelContext.insert(profile)
+        print("📝 Profile inserted into context")
 
         // Save context
         do {
             try modelContext.save()
-            print("✅ User profile saved successfully")
+            print("✅ User profile saved successfully to SwiftData")
 
-            // Complete onboarding with animation
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
-                isOnboardingComplete = true
+            // Verify it was saved
+            let descriptor = FetchDescriptor<UserProfile>()
+            if let savedProfiles = try? modelContext.fetch(descriptor) {
+                print("🔍 Profiles in database after save: \(savedProfiles.count)")
+                for (index, p) in savedProfiles.enumerated() {
+                    print("  Profile \(index + 1): \(p.accountType.displayName)")
+                }
             }
+
+            print("✅ Onboarding complete! Notifying RootView...")
+
+            // Notify RootView that a profile was created
+            NotificationCenter.default.post(name: NSNotification.Name("ProfileCreated"), object: nil)
+
         } catch {
             print("❌ Error saving user profile: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            isSaving = false
         }
     }
 }
 
 // MARK: - Preview
 #Preview {
-    OnboardingView(isOnboardingComplete: .constant(false))
+    OnboardingView()
         .modelContainer(for: [UserProfile.self], inMemory: true)
 }

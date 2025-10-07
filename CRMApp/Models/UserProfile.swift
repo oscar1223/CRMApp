@@ -35,7 +35,8 @@ enum AccountType: String, Codable {
 // MARK: - User Profile Model
 @Model
 class UserProfile {
-    var accountType: AccountType
+    @Attribute(.unique) var id: UUID
+    var accountTypeRawValue: String
     var onboardingCompleted: Bool
     var createdAt: Date
     var updatedAt: Date
@@ -43,6 +44,16 @@ class UserProfile {
     // User info (optional for now)
     var artistName: String?
     var studioName: String?
+
+    // Computed property for AccountType
+    var accountType: AccountType {
+        get {
+            AccountType(rawValue: accountTypeRawValue) ?? .individual
+        }
+        set {
+            accountTypeRawValue = newValue.rawValue
+        }
+    }
 
     init(
         accountType: AccountType,
@@ -52,7 +63,8 @@ class UserProfile {
         artistName: String? = nil,
         studioName: String? = nil
     ) {
-        self.accountType = accountType
+        self.id = UUID()
+        self.accountTypeRawValue = accountType.rawValue
         self.onboardingCompleted = onboardingCompleted
         self.createdAt = createdAt
         self.updatedAt = updatedAt

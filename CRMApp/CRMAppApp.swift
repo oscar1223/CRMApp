@@ -3,11 +3,9 @@ import SwiftData
 
 @main
 struct CRMAppApp: App {
-    @State private var isOnboardingComplete = false
-
     var body: some Scene {
         WindowGroup {
-            RootView(isOnboardingComplete: $isOnboardingComplete)
+            RootView()
         }
         .modelContainer(for: [UserProfile.self, Artist.self])
     }
@@ -16,44 +14,49 @@ struct CRMAppApp: App {
 // MARK: - Root View (handles onboarding routing)
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var profiles: [UserProfile]
-    @Binding var isOnboardingComplete: Bool
+    @Query(sort: \UserProfile.createdAt, order: .reverse) private var profiles: [UserProfile]
+
+    @State private var hasProfile = false
 
     var body: some View {
         Group {
-            if shouldShowOnboarding {
-                OnboardingView(isOnboardingComplete: $isOnboardingComplete)
-                    .transition(.opacity)
-            } else {
+            if hasProfile || !profiles.isEmpty {
                 ContentView()
-                    .transition(.opacity)
+                    .id("content-\(profiles.count)")
+            } else {
+                OnboardingView()
+                    .id("onboarding")
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: shouldShowOnboarding)
         .onAppear {
-            checkOnboardingStatus()
-            print("🏁 RootView appeared - Profiles count: \(profiles.count), isOnboardingComplete: \(isOnboardingComplete)")
+            checkProfiles()
         }
-        .onChange(of: profiles.count) { newCount in
-            print("📊 Profiles count changed to: \(newCount)")
-            checkOnboardingStatus()
+        .onChange(of: profiles.count) { oldCount, newCount in
+            print("📊 Profile count changed from \(oldCount) to \(newCount)")
+            checkProfiles()
         }
-        .onChange(of: isOnboardingComplete) { newValue in
-            print("✨ isOnboardingComplete changed to: \(newValue)")
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ProfileCreated"))) { _ in
+            print("🔔 ProfileCreated notification received!")
+            // Force re-check after a brief delay to ensure SwiftData has synced
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                checkProfiles()
+            }
         }
     }
 
-    private var shouldShowOnboarding: Bool {
-        let shouldShow = profiles.isEmpty && !isOnboardingComplete
-        print("🔍 shouldShowOnboarding: \(shouldShow) (profiles: \(profiles.count), complete: \(isOnboardingComplete))")
-        return shouldShow
-    }
+    private func checkProfiles() {
+        let hasData = !profiles.isEmpty
+        print("🏁 RootView check - Profiles count: \(profiles.count), hasProfile: \(hasProfile)")
 
-    private func checkOnboardingStatus() {
-        // If profile exists, mark onboarding as complete
-        if !profiles.isEmpty {
-            print("✅ Profile detected, marking onboarding complete")
-            isOnboardingComplete = true
+        if let profile = profiles.first {
+            print("📋 Current profile type: \(profile.accountType.displayName)")
+        }
+
+        if hasData && !hasProfile {
+            print("✨ Transitioning to ContentView...")
+            withAnimation(.easeInOut(duration: 0.3)) {
+                hasProfile = true
+            }
         }
     }
 }

@@ -51,7 +51,7 @@ struct BookingMainView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                .onChange(of: selectedRange) { newValue in
+                .onChange(of: selectedRange) { oldValue, newValue in
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                         revenuePoints = newValue.points
                     }

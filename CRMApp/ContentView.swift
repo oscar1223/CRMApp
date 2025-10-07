@@ -150,14 +150,14 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientation = UIDevice.current.orientation
         }
-        .onChange(of: profiles.first?.accountType) { newValue in
+        .onChange(of: profiles.first?.accountType) { oldValue, newValue in
             if let newType = newValue {
                 print("🔄 Profile changed detected in @Query: \(newType.displayName)")
                 currentAccountType = newType
             }
         }
-        .onChange(of: profiles.count) { _ in
-            print("👥 Profiles count changed: \(profiles.count)")
+        .onChange(of: profiles.count) { oldCount, newCount in
+            print("👥 Profiles count changed: \(newCount)")
             updateCurrentAccountType()
         }
         .preferredColorScheme(.light)
