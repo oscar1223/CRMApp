@@ -6,9 +6,20 @@ struct SettingsMainView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var profiles: [UserProfile]
     @State private var showingAccountTypeSheet = false
+    @State private var showingPaymentMethods = false
+    @State private var showingAvailability = false
+    @State private var showingStudioSettings = false
 
     private var currentProfile: UserProfile? {
         profiles.first
+    }
+
+    private var accountType: AccountType {
+        currentProfile?.accountType ?? .individual
+    }
+
+    private var isStudioAccount: Bool {
+        accountType == .studio || accountType == .hybrid
     }
 
     var body: some View {
@@ -24,6 +35,15 @@ struct SettingsMainView: View {
         }
         .background(Color.backgroundPrimary.ignoresSafeArea())
         .navigationBarHidden(true)
+        .sheet(isPresented: $showingPaymentMethods) {
+            PaymentMethodsView()
+        }
+        .sheet(isPresented: $showingAvailability) {
+            AvailabilitySettingsView()
+        }
+        .sheet(isPresented: $showingStudioSettings) {
+            StudioSettingsView()
+        }
     }
     
     // MARK: Header
@@ -135,25 +155,36 @@ struct SettingsMainView: View {
                 }
 
                 SettingsCard {
-                    SettingRow(icon: "creditcard", iconColor: .brandPrimary, title: "Métodos de pago", subtitle: "Gestiona los métodos de pago aceptados")
+                    Button(action: { showingPaymentMethods = true }) {
+                        SettingRow(icon: "creditcard", iconColor: .brandPrimary, title: "Métodos de pago", subtitle: "Gestiona los métodos de pago aceptados")
+                    }
+                    .buttonStyle(PlainButtonStyle())
+
                     Divider().padding(.leading, 52)
-                    SettingRow(icon: "building.2", iconColor: .textSecondary, title: "Lugares de trabajo", subtitle: "Gestiona conexiones con estudios")
-                    Divider().padding(.leading, 52)
-                    SettingRow(icon: "mappin.and.ellipse", iconColor: .textSecondary, title: "Ubicaciones", subtitle: "Gestiona tus ubicaciones")
-                    Divider().padding(.leading, 52)
-                    SettingRow(icon: "clock.badge.checkmark", iconColor: .textSecondary, title: "Disponibilidad", subtitle: "Gestiona horarios por ubicación")
+
+                    Button(action: { showingAvailability = true }) {
+                        SettingRow(icon: "clock.badge.checkmark", iconColor: .brandPrimary, title: "Disponibilidad", subtitle: "Gestiona horarios y disponibilidad")
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+
+                if isStudioAccount {
+                    SettingsCard {
+                        Button(action: { showingStudioSettings = true }) {
+                            SettingRow(icon: "building.2", iconColor: .brandPrimary, title: "Configuración del Estudio", subtitle: "Gestiona ajustes del estudio")
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
                 }
 
                 SettingsCard {
-                    SettingRow(icon: "envelope.badge", iconColor: .textSecondary, title: "Solicitudes de reserva", subtitle: "Recibe solicitudes desde tu página")
+                    SettingRow(icon: "bell.badge", iconColor: .textSecondary, title: "Notificaciones", subtitle: "Gestiona alertas y recordatorios")
                     Divider().padding(.leading, 52)
-                    SettingRow(icon: "shield", iconColor: .textSecondary, title: "Depósitos de pago", subtitle: "Edita la tarifa por defecto")
-                    Divider().padding(.leading, 52)
-                    SettingRow(icon: "doc.text", iconColor: .textSecondary, title: "Formularios", subtitle: "Activa o desactiva tus formularios")
+                    SettingRow(icon: "shield", iconColor: .textSecondary, title: "Privacidad y seguridad", subtitle: "Controla tu privacidad")
                 }
 
                 SettingsCard {
-                    SettingRow(icon: "creditcard.and.123", iconColor: .textSecondary, title: "Gestionar suscripción", subtitle: "Actualiza o cancela tu plan")
+                    SettingRow(icon: "creditcard.and.123", iconColor: .brandPrimary, title: "Gestionar suscripción", subtitle: "Actualiza o cancela tu plan")
                 }
             }
         }

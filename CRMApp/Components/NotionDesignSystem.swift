@@ -252,7 +252,7 @@ enum ModernTextSize {
 
 enum ModernSpacing {
     case xsmall, small, medium, large, xlarge, xxlarge
-    
+
     var value: CGFloat {
         switch self {
         case .xsmall: return 4
@@ -261,6 +261,65 @@ enum ModernSpacing {
         case .large: return 24
         case .xlarge: return 32
         case .xxlarge: return 48
+        }
+    }
+}
+
+// MARK: - Device Helpers
+extension UIDevice {
+    static var isIPad: Bool {
+        current.userInterfaceIdiom == .pad
+    }
+
+    static var isIPhone: Bool {
+        current.userInterfaceIdiom == .phone
+    }
+}
+
+// MARK: - View Extensions for Studio
+extension View {
+    /// Apply the standard studio background gradient
+    func studioBackground() -> some View {
+        self.background(
+            LinearGradient(
+                colors: [
+                    Color.backgroundPrimary,
+                    Color.backgroundTertiary,
+                    Color.brandPrimary.opacity(0.03)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+        )
+    }
+
+    /// Apply a content card with safe area bottom padding
+    func contentCard(bottomPadding: CGFloat = 100) -> some View {
+        self.padding(.bottom, bottomPadding)
+    }
+}
+
+// MARK: - Status Color Extensions
+extension ArtistStatus {
+    var colorValue: Color {
+        switch self {
+        case .active: return .successGreen
+        case .inactive: return .textTertiary
+        case .vacation: return .warningOrange
+        }
+    }
+}
+
+extension AppointmentStatus {
+    var colorValue: Color {
+        switch self {
+        case .pending: return .warningOrange
+        case .confirmed: return .brandPrimary
+        case .inProgress: return .calendarEventBlue
+        case .completed: return .successGreen
+        case .cancelled: return .textTertiary
+        case .noShow: return .errorRed
         }
     }
 }

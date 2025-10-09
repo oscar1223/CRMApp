@@ -1,191 +1,400 @@
 import SwiftUI
+import SwiftData
 
-// MARK: - Studio Dashboard View (Placeholder for Phase 2)
+// MARK: - Studio Dashboard View (Refactored)
 struct StudioDashboardView: View {
-    private var isIPad: Bool {
-        UIDevice.current.userInterfaceIdiom == .pad
+    @Environment(\.modelContext) private var modelContext
+    @Query private var appointments: [Appointment]
+    @Query private var artists: [Artist]
+
+    @State private var selectedView: DashboardView? = nil
+
+    // MARK: - Computed Stats
+    private var todayAppointments: [Appointment] {
+        appointments.filter { Calendar.current.isDateInToday($0.startDate) }
+    }
+
+    private var upcomingAppointments: [Appointment] {
+        appointments.filter {
+            $0.startDate > Date() && $0.status != .cancelled
+        }.sorted { $0.startDate < $1.startDate }
+    }
+
+    private var pendingAppointments: [Appointment] {
+        appointments.filter { $0.status == .pending }
+    }
+
+    private var activeArtists: [Artist] {
+        artists.filter { $0.status == .active }
+    }
+
+    private var monthRevenue: Double {
+        let calendar = Calendar.current
+        return appointments
+            .filter {
+                calendar.isDate($0.startDate, equalTo: Date(), toGranularity: .month) &&
+                $0.status == .completed
+            }
+            .reduce(0) { $0 + $1.price }
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: isIPad ? 32 : 24) {
-                headerSection
-                comingSoonCard
-                featuresPreview
-                Spacer(minLength: isIPad ? 60 : 40)
+        ZStack {
+            Color.clear.studioBackground()
+
+            ScrollView {
+                VStack(spacing: UIDevice.isIPad ? 24 : 20) {
+                    headerSection
+                    quickStatsSection
+                    quickActionsGrid
+                    todayScheduleSection
+                    upcomingAppointmentsSection
+
+                    Spacer(minLength: UIDevice.isIPad ? 60 : 40)
+                }
+                .modernPadding(.horizontal, .medium)
+                .modernPadding(.top, .large)
             }
-            .modernPadding(.horizontal, .medium)
-            .modernPadding(.top, .large)
         }
-        .background(
-            LinearGradient(
-                colors: [
-                    Color.backgroundPrimary,
-                    Color.backgroundTertiary,
-                    Color.brandPrimary.opacity(0.03)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-        )
+        .sheet(item: $selectedView) { view in
+            viewSheet(for: view)
+        }
     }
 
     // MARK: - Header
     private var headerSection: some View {
-        VStack(spacing: isIPad ? 16 : 12) {
-            Image(systemName: "building.2.fill")
-                .font(.system(size: isIPad ? 64 : 56, weight: .light))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [Color.brandPrimary, Color.brandPrimary.opacity(0.7)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .shadow(color: Color.brandPrimary.opacity(0.2), radius: 20, x: 0, y: 10)
+        VStack(alignment: .leading, spacing: UIDevice.isIPad ? 12 : 8) {
+            HStack {
+                Image(systemName: "building.2.fill")
+                    .font(.system(size: UIDevice.isIPad ? 32 : 28, weight: .semibold))
+                    .foregroundColor(.brandPrimary)
 
-            VStack(spacing: isIPad ? 8 : 6) {
+                Spacer()
+
+                Text(Date().formatted(.dateTime.hour().minute()))
+                    .font(.system(size: UIDevice.isIPad ? 20 : 18, weight: .semibold))
+                    .foregroundColor(.textSecondary)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
                 Text("Gestión de Estudio")
-                    .modernText(size: isIPad ? .title : .headline, color: .textPrimary)
+                    .modernText(size: UIDevice.isIPad ? .title : .headline, color: .textPrimary)
                     .fontWeight(.bold)
 
-                Text("Administra tu equipo y operaciones")
-                    .modernText(size: isIPad ? .body : .subhead, color: .textSecondary)
-                    .multilineTextAlignment(.center)
+                Text("Visión general de tu negocio")
+                    .modernText(size: UIDevice.isIPad ? .body : .subhead, color: .textSecondary)
             }
         }
     }
 
-    // MARK: - Coming Soon Card
-    private var comingSoonCard: some View {
-        VStack(spacing: isIPad ? 20 : 16) {
-            // Badge
-            HStack(spacing: 6) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 12, weight: .semibold))
-                Text("Próximamente")
-                    .font(.system(size: 12, weight: .semibold))
-            }
-            .foregroundColor(.white)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(
-                Capsule()
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.brandPrimary, Color.brandPrimary.opacity(0.8)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
+    // MARK: - Quick Stats
+    private var quickStatsSection: some View {
+        LazyVGrid(
+            columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: UIDevice.isIPad ? 4 : 2),
+            spacing: 12
+        ) {
+            StatCard(
+                icon: "eurosign.circle.fill",
+                title: "Este mes",
+                value: String(format: "%.0f€", monthRevenue),
+                color: .successGreen,
+                style: .mini
             )
-            .shadow(color: Color.brandPrimary.opacity(0.3), radius: 12, x: 0, y: 6)
 
-            // Message
-            VStack(spacing: isIPad ? 12 : 8) {
-                Text("Estamos construyendo algo increíble")
-                    .modernText(size: isIPad ? .headline : .body, color: .textPrimary)
-                    .fontWeight(.bold)
-                    .multilineTextAlignment(.center)
+            StatCard(
+                icon: "person.3.fill",
+                title: "Artistas",
+                value: "\(activeArtists.count)",
+                color: .brandPrimary,
+                style: .mini
+            )
 
-                Text("Las herramientas de gestión de estudio estarán disponibles pronto. Podrás administrar artistas, horarios compartidos, reportes y mucho más.")
-                    .modernText(size: isIPad ? .subhead : .caption, color: .textSecondary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .modernPadding(.horizontal, .medium)
-        }
-        .modernPadding(.vertical, .large)
-        .modernPadding(.horizontal, .medium)
-        .background(
-            RoundedRectangle(cornerRadius: isIPad ? 24 : 20, style: .continuous)
-                .fill(Color.backgroundCard)
-                .overlay(
-                    RoundedRectangle(cornerRadius: isIPad ? 24 : 20, style: .continuous)
-                        .stroke(Color.borderLight, lineWidth: 1)
-                )
-        )
-        .shadow(color: Color.black.opacity(0.06), radius: 20, x: 0, y: 8)
-    }
+            StatCard(
+                icon: "calendar.circle.fill",
+                title: "Hoy",
+                value: "\(todayAppointments.count)",
+                color: .calendarEventBlue,
+                style: .mini
+            )
 
-    // MARK: - Features Preview
-    private var featuresPreview: some View {
-        VStack(alignment: .leading, spacing: isIPad ? 20 : 16) {
-            Text("Funciones planificadas")
-                .modernText(size: isIPad ? .body : .subhead, color: .textPrimary)
-                .fontWeight(.bold)
-                .modernPadding(.horizontal, .small)
-
-            VStack(spacing: isIPad ? 16 : 12) {
-                featureRow(
-                    icon: "person.3.fill",
-                    title: "Gestión de Artistas",
-                    description: "Administra tu equipo de tatuadores"
-                )
-
-                featureRow(
-                    icon: "calendar.badge.clock",
-                    title: "Calendario Compartido",
-                    description: "Visualiza y coordina horarios del estudio"
-                )
-
-                featureRow(
-                    icon: "chart.bar.fill",
-                    title: "Reportes del Estudio",
-                    description: "Analytics y métricas de rendimiento"
-                )
-
-                featureRow(
-                    icon: "person.crop.circle.badge.checkmark",
-                    title: "Asignación de Citas",
-                    description: "Distribuye reservas entre artistas"
-                )
-            }
+            StatCard(
+                icon: "clock.fill",
+                title: "Pendientes",
+                value: "\(pendingAppointments.count)",
+                color: .warningOrange,
+                style: .mini
+            )
         }
     }
 
-    // MARK: - Feature Row
-    private func featureRow(icon: String, title: String, description: String) -> some View {
-        HStack(spacing: isIPad ? 16 : 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: isIPad ? 14 : 12, style: .continuous)
-                    .fill(Color.backgroundTertiary)
-                    .frame(width: isIPad ? 56 : 48, height: isIPad ? 56 : 48)
+    // MARK: - Quick Actions Grid
+    private var quickActionsGrid: some View {
+        LazyVGrid(
+            columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2),
+            spacing: 12
+        ) {
+            QuickActionCard(
+                icon: "person.3.fill",
+                title: "Artistas",
+                subtitle: "Gestionar equipo",
+                color: .brandPrimary,
+                action: { selectedView = .artists }
+            )
 
-                Image(systemName: icon)
-                    .font(.system(size: isIPad ? 24 : 20, weight: .semibold))
-                    .foregroundColor(.brandPrimary.opacity(0.7))
+            QuickActionCard(
+                icon: "calendar.badge.clock",
+                title: "Asignación",
+                subtitle: "Gestionar citas",
+                color: .calendarEventBlue,
+                action: { selectedView = .appointments }
+            )
+
+            QuickActionCard(
+                icon: "calendar",
+                title: "Calendario",
+                subtitle: "Vista compartida",
+                color: .calendarEventPink,
+                action: { selectedView = .calendar }
+            )
+
+            QuickActionCard(
+                icon: "chart.bar.fill",
+                title: "Reportes",
+                subtitle: "Analytics",
+                color: .successGreen,
+                action: { selectedView = .reports }
+            )
+        }
+    }
+
+    // MARK: - Today Schedule
+    private var todayScheduleSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Agenda de Hoy")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.textPrimary)
+
+                Spacer()
+
+                Text("\(todayAppointments.count) citas")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.brandPrimary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(Color.brandPrimary.opacity(0.1)))
             }
 
-            VStack(alignment: .leading, spacing: isIPad ? 4 : 2) {
-                Text(title)
-                    .modernText(size: isIPad ? .body : .subhead, color: .textPrimary)
-                    .fontWeight(.semibold)
+            if todayAppointments.isEmpty {
+                EmptyStateView(
+                    icon: "calendar.badge.checkmark",
+                    title: "Sin citas programadas hoy",
+                    message: ""
+                )
+                .frame(height: 150)
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(todayAppointments.prefix(3)) { appointment in
+                        CompactAppointmentRow(appointment: appointment)
+                    }
 
-                Text(description)
-                    .modernText(size: isIPad ? .subhead : .caption, color: .textSecondary)
+                    if todayAppointments.count > 3 {
+                        Button(action: { selectedView = .appointments }) {
+                            Text("Ver todas (\(todayAppointments.count))")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.brandPrimary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color.brandPrimary.opacity(0.1))
+                                )
+                        }
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .modernCard()
+    }
+
+    // MARK: - Upcoming Appointments
+    private var upcomingAppointmentsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Próximas Citas")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.textPrimary)
+
+                Spacer()
+
+                Button(action: { selectedView = .appointments }) {
+                    HStack(spacing: 4) {
+                        Text("Ver todas")
+                            .font(.system(size: 13, weight: .semibold))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .foregroundColor(.brandPrimary)
+                }
+            }
+
+            if upcomingAppointments.isEmpty {
+                EmptyStateView(
+                    icon: "calendar",
+                    title: "No hay citas próximas",
+                    message: ""
+                )
+                .frame(height: 150)
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(upcomingAppointments.prefix(5)) { appointment in
+                        UpcomingAppointmentRow(appointment: appointment)
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .modernCard()
+    }
+
+    // MARK: - Sheet Views
+    @ViewBuilder
+    private func viewSheet(for view: DashboardView) -> some View {
+        switch view {
+        case .artists:
+            ArtistsManagementView()
+        case .appointments:
+            AppointmentAssignmentView()
+        case .calendar:
+            SharedCalendarView()
+        case .reports:
+            StudioReportsView()
+        }
+    }
+}
+
+// MARK: - Dashboard View Enum
+enum DashboardView: Identifiable {
+    case artists
+    case appointments
+    case calendar
+    case reports
+
+    var id: String {
+        switch self {
+        case .artists: return "artists"
+        case .appointments: return "appointments"
+        case .calendar: return "calendar"
+        case .reports: return "reports"
+        }
+    }
+}
+
+// MARK: - Compact Appointment Row
+private struct CompactAppointmentRow: View {
+    let appointment: Appointment
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Rectangle()
+                .fill(appointment.status.colorValue)
+                .frame(width: 4)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(appointment.clientName)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.textPrimary)
+
+                HStack(spacing: 12) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "clock")
+                            .font(.system(size: 10))
+                        Text(appointment.timeRange)
+                            .font(.system(size: 11))
+                    }
+
+                    HStack(spacing: 4) {
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 10))
+                        Text(appointment.artistName)
+                            .font(.system(size: 11))
+                    }
+                }
+                .foregroundColor(.textSecondary)
             }
 
             Spacer()
 
-            Image(systemName: "lock.fill")
-                .font(.system(size: isIPad ? 16 : 14, weight: .medium))
-                .foregroundColor(.textTertiary)
+            Text(String(format: "%.0f€", appointment.price))
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(.textPrimary)
         }
-        .modernPadding(.all, .medium)
+        .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: isIPad ? 16 : 14, style: .continuous)
-                .fill(Color.backgroundCard)
-                .overlay(
-                    RoundedRectangle(cornerRadius: isIPad ? 16 : 14, style: .continuous)
-                        .stroke(Color.borderSecondary, lineWidth: 0.5)
-                )
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color.backgroundTertiary.opacity(0.3))
         )
-        .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 3)
+    }
+}
+
+// MARK: - Upcoming Appointment Row
+private struct UpcomingAppointmentRow: View {
+    let appointment: Appointment
+
+    var body: some View {
+        HStack(spacing: 12) {
+            VStack(spacing: 2) {
+                Text(appointment.startDate.formatted(.dateTime.day()))
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.textPrimary)
+
+                Text(appointment.startDate.formatted(.dateTime.month(.abbreviated)))
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.textSecondary)
+            }
+            .frame(width: 50)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(appointment.clientName)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.textPrimary)
+
+                Text(appointment.service)
+                    .font(.system(size: 12))
+                    .foregroundColor(.textSecondary)
+                    .lineLimit(1)
+
+                HStack(spacing: 4) {
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 9))
+                    Text(appointment.artistName)
+                        .font(.system(size: 11))
+                }
+                .foregroundColor(.brandPrimary)
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(appointment.startDate.formatted(.dateTime.hour().minute()))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.textPrimary)
+
+                Text(String(format: "%.0f€", appointment.price))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.successGreen)
+            }
+        }
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color.backgroundTertiary.opacity(0.3))
+        )
     }
 }
 
 #Preview {
     StudioDashboardView()
+        .modelContainer(for: [Appointment.self, Artist.self], inMemory: true)
 }

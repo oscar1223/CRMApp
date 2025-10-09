@@ -11,6 +11,14 @@
 		A1234567890123456789012C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789012D /* ContentView.swift */; };
 		A1234567890123456789012E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789012F /* Assets.xcassets */; };
 		A1234567890123456789013A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789013B /* Preview Assets.xcassets */; };
+		F02BBCDA2E9588CF00249D1E /* Appointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCD82E9588CF00249D1E /* Appointment.swift */; };
+		F02BBCDB2E9588CF00249D1E /* StudioSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCD92E9588CF00249D1E /* StudioSettings.swift */; };
+		F02BBCDF2E95890400249D1E /* AvailabilitySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCDC2E95890400249D1E /* AvailabilitySettingsView.swift */; };
+		F02BBCE02E95890400249D1E /* StudioSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCDE2E95890400249D1E /* StudioSettingsView.swift */; };
+		F02BBCE12E95890400249D1E /* PaymentMethodsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCDD2E95890400249D1E /* PaymentMethodsView.swift */; };
+		F02BBCE52E95891600249D1E /* SharedCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCE32E95891600249D1E /* SharedCalendarView.swift */; };
+		F02BBCE62E95891600249D1E /* StudioReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCE42E95891600249D1E /* StudioReportsView.swift */; };
+		F02BBCE72E95891600249D1E /* AppointmentAssignmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCE22E95891600249D1E /* AppointmentAssignmentView.swift */; };
 		F06A8ECC2E78BAB600A8DBFC /* NotionDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */; };
 		F06A8ECF2E78BAB600A8DBFC /* MonthGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EC42E78BAB600A8DBFC /* MonthGrid.swift */; };
 		F06A8ED02E78BAB600A8DBFC /* EventsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EC32E78BAB600A8DBFC /* EventsList.swift */; };
@@ -42,6 +50,14 @@
 		A1234567890123456789012F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1234567890123456789013B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A1234567890123456789016E /* CRMApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CRMApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F02BBCD82E9588CF00249D1E /* Appointment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appointment.swift; sourceTree = "<group>"; };
+		F02BBCD92E9588CF00249D1E /* StudioSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioSettings.swift; sourceTree = "<group>"; };
+		F02BBCDC2E95890400249D1E /* AvailabilitySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilitySettingsView.swift; sourceTree = "<group>"; };
+		F02BBCDD2E95890400249D1E /* PaymentMethodsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodsView.swift; sourceTree = "<group>"; };
+		F02BBCDE2E95890400249D1E /* StudioSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioSettingsView.swift; sourceTree = "<group>"; };
+		F02BBCE22E95891600249D1E /* AppointmentAssignmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentAssignmentView.swift; sourceTree = "<group>"; };
+		F02BBCE32E95891600249D1E /* SharedCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCalendarView.swift; sourceTree = "<group>"; };
+		F02BBCE42E95891600249D1E /* StudioReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioReportsView.swift; sourceTree = "<group>"; };
 		F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotionDesignSystem.swift; sourceTree = "<group>"; };
 		F06A8EC32E78BAB600A8DBFC /* EventsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsList.swift; sourceTree = "<group>"; };
 		F06A8EC42E78BAB600A8DBFC /* MonthGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthGrid.swift; sourceTree = "<group>"; };
@@ -131,6 +147,8 @@
 		F06A8EB92E78BAB600A8DBFC /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F02BBCD82E9588CF00249D1E /* Appointment.swift */,
+				F02BBCD92E9588CF00249D1E /* StudioSettings.swift */,
 				F0ABB1532E901FA900BC8069 /* Artist.swift */,
 				F0ABB1412E901E6300BC8069 /* UserProfile.swift */,
 				F0E5E5A02E8456C800B6289D /* Client.swift */,
@@ -186,6 +204,9 @@
 		F0ABB14F2E901F9A00BC8069 /* Studio */ = {
 			isa = PBXGroup;
 			children = (
+				F02BBCE22E95891600249D1E /* AppointmentAssignmentView.swift */,
+				F02BBCE32E95891600249D1E /* SharedCalendarView.swift */,
+				F02BBCE42E95891600249D1E /* StudioReportsView.swift */,
 				F0ABB14D2E901F9A00BC8069 /* ArtistsManagementView.swift */,
 				F0ABB14E2E901F9A00BC8069 /* StudioDashboardView.swift */,
 			);
@@ -203,6 +224,9 @@
 		F0FFCABE2E7AC4FB00FB9D61 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				F02BBCDC2E95890400249D1E /* AvailabilitySettingsView.swift */,
+				F02BBCDD2E95890400249D1E /* PaymentMethodsView.swift */,
+				F02BBCDE2E95890400249D1E /* StudioSettingsView.swift */,
 				F0FFCABD2E7AC4FB00FB9D61 /* SettingsMainView.swift */,
 			);
 			path = Settings;
@@ -293,6 +317,11 @@
 				F06A8ED52E78BAB600A8DBFC /* WeekStrip.swift in Sources */,
 				F0ABB1502E901F9A00BC8069 /* ArtistsManagementView.swift in Sources */,
 				F0ABB1512E901F9A00BC8069 /* OnboardingView.swift in Sources */,
+				F02BBCDF2E95890400249D1E /* AvailabilitySettingsView.swift in Sources */,
+				F02BBCE02E95890400249D1E /* StudioSettingsView.swift in Sources */,
+				F02BBCE12E95890400249D1E /* PaymentMethodsView.swift in Sources */,
+				F02BBCDA2E9588CF00249D1E /* Appointment.swift in Sources */,
+				F02BBCDB2E9588CF00249D1E /* StudioSettings.swift in Sources */,
 				F0ABB1522E901F9A00BC8069 /* StudioDashboardView.swift in Sources */,
 				A1234567890123456789012C /* ContentView.swift in Sources */,
 				F0FFCABF2E7AC4FB00FB9D61 /* SettingsMainView.swift in Sources */,
@@ -310,6 +339,9 @@
 				F0ABB1542E901FA900BC8069 /* Artist.swift in Sources */,
 				F0E5E5A32E85B59200B6289D /* NewBookingActionsSheet.swift in Sources */,
 				F0E5E59F2E8456B600B6289D /* BookingMainView.swift in Sources */,
+				F02BBCE52E95891600249D1E /* SharedCalendarView.swift in Sources */,
+				F02BBCE62E95891600249D1E /* StudioReportsView.swift in Sources */,
+				F02BBCE72E95891600249D1E /* AppointmentAssignmentView.swift in Sources */,
 				F06A8EE72E78BAD000A8DBFC /* ModernTabBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

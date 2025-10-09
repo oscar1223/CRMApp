@@ -7,7 +7,7 @@ struct CRMAppApp: App {
         WindowGroup {
             RootView()
         }
-        .modelContainer(for: [UserProfile.self, Artist.self])
+        .modelContainer(for: [UserProfile.self, Artist.self, Appointment.self, StudioSettings.self])
     }
 }
 
