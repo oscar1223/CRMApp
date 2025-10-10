@@ -19,6 +19,8 @@
 		F02BBCE52E95891600249D1E /* SharedCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCE32E95891600249D1E /* SharedCalendarView.swift */; };
 		F02BBCE62E95891600249D1E /* StudioReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCE42E95891600249D1E /* StudioReportsView.swift */; };
 		F02BBCE72E95891600249D1E /* AppointmentAssignmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCE22E95891600249D1E /* AppointmentAssignmentView.swift */; };
+		F02BBCEA2E9962B600249D1E /* SharedFormComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCE92E9962B600249D1E /* SharedFormComponents.swift */; };
+		F02BBCEB2E9962B600249D1E /* SharedCardComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02BBCE82E9962B600249D1E /* SharedCardComponents.swift */; };
 		F06A8ECC2E78BAB600A8DBFC /* NotionDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */; };
 		F06A8ECF2E78BAB600A8DBFC /* MonthGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EC42E78BAB600A8DBFC /* MonthGrid.swift */; };
 		F06A8ED02E78BAB600A8DBFC /* EventsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06A8EC32E78BAB600A8DBFC /* EventsList.swift */; };
@@ -58,6 +60,8 @@
 		F02BBCE22E95891600249D1E /* AppointmentAssignmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentAssignmentView.swift; sourceTree = "<group>"; };
 		F02BBCE32E95891600249D1E /* SharedCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCalendarView.swift; sourceTree = "<group>"; };
 		F02BBCE42E95891600249D1E /* StudioReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioReportsView.swift; sourceTree = "<group>"; };
+		F02BBCE82E9962B600249D1E /* SharedCardComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCardComponents.swift; sourceTree = "<group>"; };
+		F02BBCE92E9962B600249D1E /* SharedFormComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedFormComponents.swift; sourceTree = "<group>"; };
 		F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotionDesignSystem.swift; sourceTree = "<group>"; };
 		F06A8EC32E78BAB600A8DBFC /* EventsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsList.swift; sourceTree = "<group>"; };
 		F06A8EC42E78BAB600A8DBFC /* MonthGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthGrid.swift; sourceTree = "<group>"; };
@@ -136,6 +140,8 @@
 		F06A8EB42E78BAB600A8DBFC /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				F02BBCE82E9962B600249D1E /* SharedCardComponents.swift */,
+				F02BBCE92E9962B600249D1E /* SharedFormComponents.swift */,
 				F0ABB1552E901FB300BC8069 /* StudioTabBar.swift */,
 				F0FFCAC02E7AC52C00FB9D61 /* AppTabBar.swift */,
 				F06A8EB32E78BAB600A8DBFC /* NotionDesignSystem.swift */,
@@ -312,6 +318,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F06A8ECC2E78BAB600A8DBFC /* NotionDesignSystem.swift in Sources */,
+				F02BBCEA2E9962B600249D1E /* SharedFormComponents.swift in Sources */,
+				F02BBCEB2E9962B600249D1E /* SharedCardComponents.swift in Sources */,
 				F06A8ECF2E78BAB600A8DBFC /* MonthGrid.swift in Sources */,
 				F06A8ED02E78BAB600A8DBFC /* EventsList.swift in Sources */,
 				F06A8ED52E78BAB600A8DBFC /* WeekStrip.swift in Sources */,

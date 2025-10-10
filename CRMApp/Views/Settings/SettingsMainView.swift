@@ -395,7 +395,7 @@ private struct AccountTypePickerSheet: View {
                         }
                     }
 
-                    Text(type.description)
+                    Text(type.subtitle)
                         .modernText(size: .caption, color: .textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }

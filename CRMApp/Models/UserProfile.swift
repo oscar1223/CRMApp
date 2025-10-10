@@ -15,7 +15,7 @@ enum AccountType: String, Codable {
         }
     }
 
-    var description: String {
+    var subtitle: String {
         switch self {
         case .individual: return "Gestiona tu agenda personal y clientes"
         case .studio: return "Administra tu estudio y equipo de artistas"

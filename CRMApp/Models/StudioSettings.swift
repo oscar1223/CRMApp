@@ -10,7 +10,7 @@ class StudioSettings {
     var phone: String
     var email: String
     var website: String
-    var description: String
+    var studioDescription: String
 
     // Business hours
     var openTime: Date
@@ -47,7 +47,7 @@ class StudioSettings {
         phone: String = "",
         email: String = "",
         website: String = "",
-        description: String = "",
+        studioDescription: String = "",
         openTime: Date = Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date()) ?? Date(),
         closeTime: Date = Calendar.current.date(bySettingHour: 20, minute: 0, second: 0, of: Date()) ?? Date(),
         workingDays: [Int] = [1, 2, 3, 4, 5, 6], // Monday to Saturday
@@ -74,7 +74,7 @@ class StudioSettings {
         self.phone = phone
         self.email = email
         self.website = website
-        self.description = description
+        self.studioDescription = studioDescription
         self.openTime = openTime
         self.closeTime = closeTime
         self.workingDays = workingDays

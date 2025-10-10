@@ -134,7 +134,7 @@ struct OnboardingView: View {
                         )
                         .fontWeight(.bold)
 
-                    Text(type.description)
+                    Text(type.subtitle)
                         .modernText(size: isIPad ? .subhead : .caption, color: .textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
