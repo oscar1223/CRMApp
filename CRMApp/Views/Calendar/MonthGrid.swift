@@ -56,20 +56,20 @@ struct MonthGrid: View {
         // Previous month padding
         if let prevStart = calendar.date(byAdding: .day, value: -firstWeekdayOffset, to: monthStart) {
             for i in 0..<(firstWeekdayOffset) {
-                let d = calendar.date(byAdding: .day, value: i, to: prevStart)!
+                guard let d = calendar.date(byAdding: .day, value: i, to: prevStart) else { continue }
                 days.append(d)
             }
         }
         // Current month
         for i in 0..<daysInMonth {
-            let d = calendar.date(byAdding: .day, value: i, to: monthStart)!
+            guard let d = calendar.date(byAdding: .day, value: i, to: monthStart) else { continue }
             days.append(d)
         }
         // Next month padding to 6 weeks (42 cells)
         let remaining = max(0, 42 - days.count)
         if let last = days.last {
             for i in 1...remaining {
-                let d = calendar.date(byAdding: .day, value: i, to: last)!
+                guard let d = calendar.date(byAdding: .day, value: i, to: last) else { continue }
                 days.append(d)
             }
         }
@@ -120,15 +120,16 @@ struct MonthGrid: View {
     private var monthHeader: some View {
         HStack {
             // Compact previous month button
-            Button(action: { 
+            Button(action: {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                    onMonthChanged(-1) 
+                    onMonthChanged(-1)
                 }
             }) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: isIPad ? 16 : 14, weight: .semibold))
                     .foregroundColor(Color.textSecondary)
                     .frame(width: isIPad ? 36 : 32, height: isIPad ? 36 : 32)
+                    .frame(minWidth: 44, minHeight: 44)
                     .background(
                         Circle()
                             .fill(Color.backgroundTertiary)
@@ -139,6 +140,8 @@ struct MonthGrid: View {
                     )
             }
             .modernButton(style: .ghost)
+            .accessibilityLabel("Mes anterior")
+            .accessibilityHint("Navega al mes anterior en el calendario")
             
             Spacer()
             
@@ -156,15 +159,16 @@ struct MonthGrid: View {
             Spacer()
             
             // Compact next month button
-            Button(action: { 
+            Button(action: {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                    onMonthChanged(1) 
+                    onMonthChanged(1)
                 }
             }) {
                 Image(systemName: "chevron.right")
                     .font(.system(size: isIPad ? 16 : 14, weight: .semibold))
                     .foregroundColor(Color.textSecondary)
                     .frame(width: isIPad ? 36 : 32, height: isIPad ? 36 : 32)
+                    .frame(minWidth: 44, minHeight: 44)
                     .background(
                         Circle()
                             .fill(Color.backgroundTertiary)
@@ -175,6 +179,8 @@ struct MonthGrid: View {
                     )
             }
             .modernButton(style: .ghost)
+            .accessibilityLabel("Mes siguiente")
+            .accessibilityHint("Navega al mes siguiente en el calendario")
         }
         .modernPadding(.vertical, .small)
     }
@@ -204,7 +210,8 @@ struct MonthGrid: View {
         let isToday = calendar.isDateInToday(date)
         let isSelected = calendar.isDate(date, inSameDayAs: selectedDate)
         let dayEvents = eventsByDay[calendar.startOfDay(for: date)] ?? []
-        
+        let dayNumber = calendar.component(.day, from: date)
+
         return VStack(spacing: isIPad ? 4 : 3) {
             // Compact day number header
             HStack {
@@ -254,6 +261,7 @@ struct MonthGrid: View {
             .modernPadding(.bottom, .xsmall)
         }
         .frame(maxWidth: .infinity)
+        .frame(minWidth: 44, minHeight: 44)
         .background(
             RoundedRectangle(cornerRadius: isIPad ? 12 : 8)
                 .fill(
@@ -296,6 +304,9 @@ struct MonthGrid: View {
                 onSelectDate(date)
             }
         }
+        .accessibilityLabel("\(dayNumber) \(isToday ? "hoy" : "")")
+        .accessibilityHint(dayEvents.isEmpty ? "Sin eventos" : "\(dayEvents.count) evento\(dayEvents.count == 1 ? "" : "s")")
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
     
     private func compactEventPreview(_ event: MockEvent) -> some View {

@@ -50,13 +50,7 @@ struct ChatMainView: View {
     private var content: some View {
         ZStack {
             if messages.isEmpty {
-                VStack(spacing: 16) {
-                    ProgressView()
-                        .tint(.brandPrimary)
-                    Text("Empieza una conversación")
-                        .modernText(size: .subhead, color: .textSecondary)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                emptyState
             } else {
                 ScrollViewReader { proxy in
                     ScrollView {
@@ -131,6 +125,70 @@ struct ChatMainView: View {
         .background(BlurBackground())
     }
     
+    // MARK: Empty State
+    private var emptyState: some View {
+        VStack(spacing: 24) {
+            VStack(spacing: 16) {
+                Image(systemName: "bubble.left.and.bubble.right")
+                    .font(.system(size: 48, weight: .light))
+                    .foregroundColor(.brandPrimary.opacity(0.6))
+
+                VStack(spacing: 8) {
+                    Text("¿En qué puedo ayudarte?")
+                        .modernText(size: .headline, color: .textPrimary)
+                        .fontWeight(.bold)
+
+                    Text("Pregúntame sobre tus reservas, clientes o gestión del negocio")
+                        .modernText(size: .subhead, color: .textSecondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                }
+            }
+
+            // Quick action chips
+            VStack(spacing: 12) {
+                suggestionChip("Crear una reserva", icon: "calendar.badge.plus")
+                suggestionChip("Ver estadísticas", icon: "chart.bar")
+                suggestionChip("Gestionar clientes", icon: "person.2")
+            }
+            .padding(.horizontal, 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.bottom, 100)
+    }
+
+    private func suggestionChip(_ text: String, icon: String) -> some View {
+        Button(action: { draft = text; isInputFocused = true }) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.brandPrimary)
+                    .frame(width: 24)
+
+                Text(text)
+                    .modernText(size: .body, color: .textPrimary)
+                    .fontWeight(.medium)
+
+                Spacer()
+
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.textTertiary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.backgroundCard)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.borderSecondary, lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: Helpers
     private func messageBubble(_ msg: ChatMessage) -> some View {
         HStack(alignment: .bottom) {

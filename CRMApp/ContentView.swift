@@ -140,10 +140,8 @@ struct ContentView: View {
             loadMockEvents()
             setupOrientationObserver()
             updateCurrentAccountType()
-            print("📱 ContentView appeared - Account Type: \(currentAccountType.displayName)")
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("AccountTypeChanged"))) { _ in
-            print("🔔 AccountTypeChanged notification received")
             updateCurrentAccountType()
             forceRefresh.toggle()
         }
@@ -152,12 +150,10 @@ struct ContentView: View {
         }
         .onChange(of: profiles.first?.accountType) { oldValue, newValue in
             if let newType = newValue {
-                print("🔄 Profile changed detected in @Query: \(newType.displayName)")
                 currentAccountType = newType
             }
         }
         .onChange(of: profiles.count) { oldCount, newCount in
-            print("👥 Profiles count changed: \(newCount)")
             updateCurrentAccountType()
         }
         .preferredColorScheme(.light)
@@ -167,7 +163,6 @@ struct ContentView: View {
     private func updateCurrentAccountType() {
         if let type = profiles.first?.accountType {
             currentAccountType = type
-            print("🔄 Updated currentAccountType to: \(type.displayName)")
         }
     }
 

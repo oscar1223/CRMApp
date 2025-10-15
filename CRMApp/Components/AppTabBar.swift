@@ -77,12 +77,16 @@ struct AppTabBar: View {
         .padding(.vertical, barVerticalPadding)
         .background(
             RoundedRectangle(cornerRadius: barCornerRadius, style: .continuous)
-                .fill(Color.brandSecondary)
+                .fill(.ultraThinMaterial)
                 .overlay(
                     RoundedRectangle(cornerRadius: barCornerRadius, style: .continuous)
-                        .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
+                        .fill(Color.brandSecondary.opacity(0.7))
                 )
-                .shadow(color: Color.black.opacity(0.25), radius: 18, x: 0, y: 8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: barCornerRadius, style: .continuous)
+                        .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
+                )
+                .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 4)
         )
         .padding(.horizontal, responsiveOuterPadding)
         .padding(.bottom, isIPad ? 0 : 8)  // No bottom padding for iPad

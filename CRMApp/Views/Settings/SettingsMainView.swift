@@ -9,6 +9,8 @@ struct SettingsMainView: View {
     @State private var showingPaymentMethods = false
     @State private var showingAvailability = false
     @State private var showingStudioSettings = false
+    @State private var showingError = false
+    @State private var errorMessage = ""
 
     private var currentProfile: UserProfile? {
         profiles.first
@@ -43,6 +45,11 @@ struct SettingsMainView: View {
         }
         .sheet(isPresented: $showingStudioSettings) {
             StudioSettingsView()
+        }
+        .alert("Error", isPresented: $showingError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
         }
     }
     
@@ -123,7 +130,6 @@ struct SettingsMainView: View {
                 // Account Type Section (NEW)
                 SettingsCard {
                     Button(action: {
-                        print("🎯 Account Type button tapped - Current: \(currentProfile?.accountType.displayName ?? "None")")
                         showingAccountTypeSheet = true
                     }) {
                         HStack(spacing: 12) {
@@ -199,23 +205,21 @@ struct SettingsMainView: View {
     // MARK: - Update Account Type
     private func updateAccountType(to newType: AccountType) {
         guard let profile = currentProfile else {
-            print("⚠️ No profile found")
+            errorMessage = "No se encontró el perfil. Por favor, intenta de nuevo."
+            showingError = true
             return
         }
-
-        print("🔄 Updating account type from \(profile.accountType.displayName) to \(newType.displayName)")
 
         profile.accountType = newType
         profile.updatedAt = Date()
 
         do {
             try modelContext.save()
-            print("✅ Account type saved successfully")
-
             // Force refresh by notifying
             NotificationCenter.default.post(name: NSNotification.Name("AccountTypeChanged"), object: nil)
         } catch {
-            print("❌ Error updating account type: \(error)")
+            errorMessage = "No se pudo guardar el tipo de cuenta. Por favor, intenta de nuevo."
+            showingError = true
         }
     }
 }
@@ -434,9 +438,7 @@ private struct AccountTypePickerSheet: View {
 
     private var saveButton: some View {
         Button(action: {
-            print("💾 Save button tapped - Selected type: \(selectedType.displayName)")
             onSelect(selectedType)
-            print("✅ onSelect called, dismissing sheet")
             dismiss()
         }) {
             HStack(spacing: 8) {

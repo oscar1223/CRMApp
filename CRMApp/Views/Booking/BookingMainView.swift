@@ -111,7 +111,7 @@ struct BookingMainView: View {
                 .modernButton(style: .secondary)
             }
             
-            VStack(spacing: 8) {
+            LazyVStack(spacing: 8) {
                 ForEach(clients) { client in
                     ClientRow(client: client)
                 }

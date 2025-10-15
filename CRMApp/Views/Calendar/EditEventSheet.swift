@@ -9,6 +9,7 @@ struct EditEventSheet: View {
     let onSave: (_ title: String, _ start: Date, _ end: Date, _ isAllDay: Bool) -> Void
     let onDelete: () -> Void
     @Environment(\.dismiss) private var dismiss
+    @State private var showingDeleteConfirmation = false
     
     private var isIPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
@@ -104,8 +105,7 @@ struct EditEventSheet: View {
                 // Actions
                 HStack(spacing: isIPad ? 12 : 8) {
                     Button {
-                        onDelete()
-                        dismiss()
+                        showingDeleteConfirmation = true
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "trash")
@@ -128,6 +128,19 @@ struct EditEventSheet: View {
             .modernPadding(.bottom, .large)
         }
         .background(Color.backgroundPrimary.ignoresSafeArea())
+        .confirmationDialog(
+            "¿Eliminar esta cita?",
+            isPresented: $showingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Eliminar", role: .destructive) {
+                onDelete()
+                dismiss()
+            }
+            Button("Cancelar", role: .cancel) {}
+        } message: {
+            Text("Esta acción no se puede deshacer.")
+        }
     }
 }
 

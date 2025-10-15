@@ -32,11 +32,9 @@ struct RootView: View {
             checkProfiles()
         }
         .onChange(of: profiles.count) { oldCount, newCount in
-            print("📊 Profile count changed from \(oldCount) to \(newCount)")
             checkProfiles()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ProfileCreated"))) { _ in
-            print("🔔 ProfileCreated notification received!")
             // Force re-check after a brief delay to ensure SwiftData has synced
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 checkProfiles()
@@ -46,14 +44,8 @@ struct RootView: View {
 
     private func checkProfiles() {
         let hasData = !profiles.isEmpty
-        print("🏁 RootView check - Profiles count: \(profiles.count), hasProfile: \(hasProfile)")
-
-        if let profile = profiles.first {
-            print("📋 Current profile type: \(profile.accountType.displayName)")
-        }
 
         if hasData && !hasProfile {
-            print("✨ Transitioning to ContentView...")
             withAnimation(.easeInOut(duration: 0.3)) {
                 hasProfile = true
             }

@@ -88,6 +88,8 @@ struct CalendarMainView: View {
                         }
                     }
                     .modernButton(style: .primary)
+                    .accessibilityLabel("Crear nueva cita")
+                    .accessibilityHint("Abre opciones para añadir un evento al calendario")
                     
                     Button(action: { toggleViewMode() }) {
                         HStack(spacing: isIPad ? 4 : 3) {
@@ -99,6 +101,9 @@ struct CalendarMainView: View {
                         }
                     }
                     .modernButton(style: .secondary)
+                    .accessibilityLabel("Cambiar vista del calendario")
+                    .accessibilityHint("Alterna entre vista de mes y semana")
+                    .accessibilityValue(viewMode.rawValue)
                 }
             }
             .modernPadding(.horizontal, .medium)
@@ -197,6 +202,8 @@ struct CalendarMainView: View {
                     }
                 }
                 .modernButton(style: .ghost)
+                .accessibilityLabel("Ver todos los eventos")
+                .accessibilityHint("Muestra todos los eventos en una lista completa")
             }
             .modernPadding(.horizontal, .medium)
             .modernPadding(.top, .small)
@@ -281,8 +288,7 @@ struct CalendarMainView: View {
             eventsByDay[oldDay] = arr
             eventsCountByDay[oldDay] = arr.count
         }
-        var newEvent = MockEvent(title: title, startDate: start, endDate: end, isAllDay: isAllDay)
-        newEvent.id = event.id
+        let newEvent = MockEvent(id: event.id, title: title, startDate: start, endDate: end, isAllDay: isAllDay)
         let newDay = cal.startOfDay(for: start)
         eventsByDay[newDay, default: []].append(newEvent)
         eventsCountByDay[newDay] = eventsByDay[newDay]?.count ?? 0
